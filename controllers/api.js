@@ -101,6 +101,33 @@ exports.getGoogleFiles = function(req, res, next) {
   makeRequest();
 };
 
+exports.getSyncedFiles = function(req, res, next) {
+  User.findById(req.user.id, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    return res.render('api/synced',
+      {apiFiles : user.apiFiles}
+    )
+  });
+};
+
+exports.unsyncFile = function(req, res, next) {
+  User.findById(req.user.id, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    user.apiFiles = user.apiFiles.filter(
+      f => f.id != req.params.id
+    )
+    user.save();
+    return res.render('api/synced',
+      {apiFiles : user.apiFiles}
+    )
+  });
+};
+
+
 /**
  * GET /api/file
  */
