@@ -19,8 +19,7 @@ function parseCsv(path, sep) {
   return {'data': results}
 }
 
-module.exports.parseFile = function(path) {
-
+function parseFile(path) {
  const extension = path.split('.').reverse()[0];
  if (extension === 'csv') {
    return parseCsv(path, ',')
@@ -36,3 +35,17 @@ module.exports.parseFile = function(path) {
  });
  return res;
 }
+
+function parseAllFiles(dirPath) {
+  var res = {}
+  fs.readdirSync(dirPath)
+    .filter(name => /(csv|tsv|ods|xlsx)$/.test(name))
+    .forEach(filePath => {
+      const name = filePath.replace(/\./g, '_')
+      res[name] = parseFile(dirPath + '/' + filePath);
+    })
+  return res;
+}
+
+module.exports.parseFile = parseFile
+module.exports.parseAllFiles = parseAllFiles

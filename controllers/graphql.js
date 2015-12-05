@@ -2,11 +2,10 @@ const router = require('express').Router();
 const {graphql} = require('graphql');
 
 
-import {parseFile} from '../libs/parsing';
-import {schemaFromSpreadSheet} from '../libs/genSchema';
-const FILE = './fixtures/TestTables.ods';
-const data = parseFile(FILE);
-const schema = schemaFromSpreadSheet("test", data);
+import {parseAllFiles} from '../libs/parsing';
+import {schemaFromSpreadSheetsObj} from '../libs/genSchema';
+const data = parseAllFiles('./fixtures');
+const schema = schemaFromSpreadSheetsObj(data);
 
 const GRAPHIQL_VERSION = '0.3.1';
 /* eslint-disable  */
