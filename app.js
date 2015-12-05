@@ -125,6 +125,7 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
  */
 app.get('/api', apiController.getApi);
 app.get('/api/files', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFiles);
+app.get('/api/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFile);
 
 /**
  * OAuth authentication routes. (Sign in)

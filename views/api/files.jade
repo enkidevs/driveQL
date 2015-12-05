@@ -7,6 +7,6 @@ block content
   .row
     for file in files
       .col-xs-3.col-md-2
-        a.thumbnail(href='#{file.selfLink}')
+        a.thumbnail(href='/api/file/#{file.id}')
           img(src='#{file.thumbnailLink}')
           | #{file.title}
