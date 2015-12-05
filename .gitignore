@@ -27,3 +27,6 @@ Thumbs.db
 
 # local db
 .localdb
+
+# file cache
+.cached_files
