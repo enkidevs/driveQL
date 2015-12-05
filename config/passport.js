@@ -41,6 +41,7 @@ passport.deserializeUser(function(id, done) {
    if (req.user) {
      User.findOne({ google: profile.id }, function(err, existingUser) {
        if (existingUser) {
+         console.log(refreshToken)
          existingUser.tokens = existingUser.tokens.map(t => {
            if (t.kind === 'google') {
              return { kind: 'google', accessToken, refreshToken }
@@ -49,6 +50,7 @@ passport.deserializeUser(function(id, done) {
          });
          req.user = existingUser;
          existingUser.save((err) => done(err, existingUser));
+         return;
        } else {
          User.findById(req.user.id, function(err, user) {
            user.google = profile.id;
@@ -66,7 +68,15 @@ passport.deserializeUser(function(id, done) {
    } else {
      User.findOne({ google: profile.id }, function(err, existingUser) {
        if (existingUser) {
-         return done(null, existingUser);
+         existingUser.tokens = existingUser.tokens.map(t => {
+           if (t.kind === 'google') {
+             return { kind: 'google', accessToken, refreshToken }
+           }
+           return t;
+         });
+         req.user = existingUser;
+         existingUser.save((err) => done(err, existingUser));
+         return;
        }
        User.findOne({ email: profile.emails[0].value }, function(err, existingEmailUser) {
          if (existingEmailUser) {
