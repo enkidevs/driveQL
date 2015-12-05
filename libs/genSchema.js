@@ -25,8 +25,17 @@ function isNormalInteger(str) {
     return String(n) === str && n >= 0;
 }
 
+var typenames_count = {};
+
 function sanitize(name) {
-  return name.replace(/\./g, '_').replace(/\//g, '_');
+  let clean = name.replace(/\./g, '_').replace(/\//g, '_');
+  if (typenames_count[clean]) {
+    typenames_count[clean] = typenames_count[clean] + 1;
+    clean = clean + '_' + (typenames_count[clean] - 1);
+  } else {
+    typenames_count[clean] = 1;
+  }
+  return clean;
 }
 
 function schemaFromArrayOfObjects(name, data) {
@@ -52,7 +61,7 @@ function schemaFromArrayOfObjects(name, data) {
   });
 }
 
-function schemaFromSpreadSheet(name, obj) {
+function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
   var fieldsFromData = {};
   var connectionToFields = {};
   Object.keys(obj).forEach(sheetName => {
@@ -98,9 +107,31 @@ function schemaFromSpreadSheet(name, obj) {
     description: 'File ' + name,
     fields: () => fieldsFromData,
   });
+  if (returnTheTypeOnly) {
+    return ot;
+  }
   return new GraphQLSchema({
     query: ot
   });
 }
 
+function schemaFromSpreadSheetsObj(data) {
+  typenames_count = {};
+  var fieldsFromData = {};
+  Object.keys(data).forEach(k => {
+    fieldsFromData[k] = {
+      name: k,
+      type: schemaFromSpreadSheet(k, data[k], true),
+      resolve: () => data[k],
+    }
+  })
+  return new GraphQLSchema({
+    query: new GraphQLObjectType({
+      name: 'root',
+      fields: () => fieldsFromData,
+    }),
+  });
+}
+
 module.exports.schemaFromSpreadSheet = schemaFromSpreadSheet;
+module.exports.schemaFromSpreadSheetsObj = schemaFromSpreadSheetsObj;
