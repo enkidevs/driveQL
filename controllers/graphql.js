@@ -24,7 +24,7 @@ var schema = new GraphQLSchema({
  * Home page.
  */
 export function index(req, res) {
-  let query = '{hello}';
+  let { query } = req.query;
   graphql(schema, query).then(result => {
     res.send(result);
   });
