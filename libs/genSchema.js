@@ -204,7 +204,17 @@ function schemaFromSpreadSheetsObj(data) {
       type: schemaFromSpreadSheet(k, data[k], true),
       resolve: () => data[k],
     }
-  })
+  });
+  if (!Object.keys(data).length) {
+    fieldsFromData = {
+      no_data: {
+        name: 'no_data',
+        description: 'No API yet',
+        type: GraphQLString,
+        resolve: () => 'no data'
+      }
+    };
+  }
   return new GraphQLSchema({
     query: new GraphQLObjectType({
       name: 'root',
