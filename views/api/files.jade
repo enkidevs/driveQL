@@ -1,0 +1,12 @@
+extends ../layout
+
+block content
+  h3
+    i.fa.fa-group
+    |  My Files
+  .row
+    for file in files
+      .col-xs-3.col-md-2
+        a.thumbnail(href='#{file.selfLink}')
+          img(src='#{file.thumbnailLink}')
+          | #{file.title}

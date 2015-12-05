@@ -25,6 +25,7 @@ var async = require('async');
 var querystring = require('querystring');
 
 var secrets = require('../config/secrets');
+var google = require('googleapis');
 
 /**
  * GET /api
@@ -37,41 +38,34 @@ exports.getApi = function(req, res) {
 };
 
 /**
- * GET /api/foursquare
- * Foursquare API example.
+ * GET /api/files
  */
-exports.getFoursquare = function(req, res, next) {
-  foursquare = require('node-foursquare')({ secrets: secrets.foursquare });
+exports.getGoogleFiles = function(req, res, next) {
+  var token = _.find(req.user.tokens, { kind: 'google' });
+  var OAuth2 = google.auth.OAuth2;
+  var oauth2Client = new OAuth2(
+    secrets.google.clientID,
+    secrets.google.clientSecret,
+    secrets.google.callbackURL
+  );
+  oauth2Client.setCredentials({
+    access_token: token.accessToken,
+    refresh_token: token.refreshToken,
+  });
 
-  var token = _.find(req.user.tokens, { kind: 'foursquare' });
-  async.parallel({
-    trendingVenues: function(callback) {
-      foursquare.Venues.getTrending('40.7222756', '-74.0022724', { limit: 50 }, token.accessToken, function(err, results) {
-        callback(err, results);
-      });
-    },
-    venueDetail: function(callback) {
-      foursquare.Venues.getVenue('49da74aef964a5208b5e1fe3', token.accessToken, function(err, results) {
-        callback(err, results);
-      });
-    },
-    userCheckins: function(callback) {
-      foursquare.Users.getCheckins('self', null, token.accessToken, function(err, results) {
-        callback(err, results);
-      });
-    }
-  },
-  function(err, results) {
+  var drive = google.drive({ version: 'v2', auth: oauth2Client });
+
+  drive.files.list({
+    q: 'mimeType = \'application/vnd.google-apps.spreadsheet\''
+  }, function(err, result) {
     if (err) {
       return next(err);
     }
-    res.render('api/foursquare', {
-      title: 'Foursquare API',
-      trendingVenues: results.trendingVenues,
-      venueDetail: results.venueDetail,
-      userCheckins: results.userCheckins
+    console.log(result.items)
+    res.render('api/files', {
+      files: result.items,
     });
-  });
+  })
 };
 
 /**
