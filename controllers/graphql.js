@@ -12,6 +12,18 @@ function renderGraphiQL({query, variables, version = GRAPHIQL_VERSION} = {}) {
         <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
         <script src="//cdn.jsdelivr.net/react/0.14.1/react.min.js"></script>
         <script src="//cdn.jsdelivr.net/graphiql/${version}/graphiql.min.js"></script>
+        <style>
+        .CodeMirror-hint-information .content {
+            -webkit-line-clamp: none;
+            max-height: inherit;
+            white-space: pre;
+        }
+        .CodeMirror-hint-information .content p {
+          -webkit-line-clamp: none;
+          max-height: inherit;
+          white-space: pre;
+        }
+        </style>
       </head>
       <body>
         Loading...
