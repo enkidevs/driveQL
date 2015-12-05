@@ -1,4 +1,5 @@
 import {
+  GraphQLID,
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
@@ -55,6 +56,8 @@ function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById)
           normalizedName = sheetName;
           type = sheetSchemas[sheetName];
           relation = true;
+        } else if (fieldName === 'id'){
+          type = GraphQLID;
         } else {
           type = isNormalInteger(val) ? GraphQLInt : GraphQLString;
         }
