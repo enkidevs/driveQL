@@ -136,11 +136,11 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 });
 
 
-var graphqlController = require('./controllers/graphql');
-app.get('/graphql', graphqlController.index);
+var graphqloldController = require('./controllers/graphql_old');
+app.get('/graphqlold', graphqloldController.index);
 
-var graphiqlController = require('./controllers/graphiql');
-app.use('/graphiql', graphiqlController);
+var graphiqlController = require('./controllers/graphql');
+app.use('/graphql', graphiqlController);
 
 /**
  * Error Handler.
