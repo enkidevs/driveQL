@@ -5,6 +5,16 @@ import {
   GraphQLInt
 } from 'graphql';
 
+import {
+  connectionArgs,
+  connectionDefinitions,
+  connectionFromArray,
+  fromGlobalId,
+  globalIdField,
+  mutationWithClientMutationId,
+  nodeDefinitions,
+} from 'graphql-relay';
+
 let count = 0;
 
 
@@ -36,7 +46,6 @@ function schemaFromArrayOfObjects(name, data) {
   return new GraphQLObjectType({
     name: sanitize(name),
     fields: () => {
-      console.log('hello from schemaFromArrayOfObjects')
       return fieldsFromData;
     },
   });
@@ -44,14 +53,30 @@ function schemaFromArrayOfObjects(name, data) {
 
 function schemaFromSpreadSheet(name, obj) {
   var fieldsFromData = {};
+  var connectionToFields = {};
   Object.keys(obj).forEach(sheetName => {
+    var sheetSchema = schemaFromArrayOfObjects(sheetName, obj[sheetName]);
+    var {connectionType} = connectionDefinitions({name: sheetName + 'ConnectionType', nodeType: sheetSchema});
     fieldsFromData[sheetName] = {
-      type: schemaFromArrayOfObjects(sheetName, obj[sheetName]),
+      type: sheetSchema,
       description: sheetName + ' sheet',
-      resolve: () => {
-        console.log('resolve from schemaFromSpreadSheet for sheet', sheetName)
-        return obj[sheetName];
+      args: {
+        row: {
+          type: GraphQLInt,
+        },
       },
+      resolve: (root, {row}) => {
+        return obj[sheetName][row];
+      },
+    }
+    fieldsFromData[sheetName + 's'] = {
+      type: connectionType,
+      description: '',
+      args: connectionArgs,
+      resolve: (root, args) => connectionFromArray(
+        obj[sheetName],
+        args
+      ),
     }
   });
   let ot = new GraphQLObjectType({
