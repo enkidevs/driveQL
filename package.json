@@ -6,7 +6,8 @@
     "url": "https://github.com/sahat/hackathon-starter.git"
   },
   "scripts": {
-    "start": "nodemon app.js --exec babel-node --presets es2015,stage-0",
+    "start": "node app.js --exec babel-node --presets es2015,stage-0",
+    "start-dev": "nodemon app.js --exec babel-node --presets es2015,stage-0",
     "test": "mocha --reporter spec --timeout 5000"
   },
   "dependencies": {
