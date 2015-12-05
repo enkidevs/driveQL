@@ -7746,8 +7746,8 @@ button.close {
 .btn-social, .btn-social-icon {
   position: relative;
   padding-left: 44px;
+  margin-top: 10px;
   text-align: left;
-  marign-top: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

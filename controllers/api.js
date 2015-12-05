@@ -10,6 +10,16 @@ var secrets = require('../config/secrets');
 var google = require('googleapis');
 
 /**
+* GET /api
+* List of API examples.
+*/
+exports.getApi = function(req, res) {
+ res.render('api/index', {
+   title: 'API Examples'
+ });
+};
+
+/**
  * GET /api/files
  */
 exports.getGoogleFiles = function(req, res, next) {
