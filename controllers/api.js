@@ -113,7 +113,15 @@ exports.getGoogleFile = function(req, res, next) {
   downloadGoogleSpreadsheet(token, file, () => {
     console.log('done')
   });
-  res.render('api/file', {
-    file,
-  });
+  User.findById(req.user.id, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    user.apiFiles.push(file);
+    user.save(() => {
+      res.render('api/file', {
+        file,
+      });
+    })
+  })
 };
