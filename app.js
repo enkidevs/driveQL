@@ -11,7 +11,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
-var lusca = require('lusca');
+// var lusca = require('lusca');
 var methodOverride = require('method-override');
 
 var _ = require('lodash');
@@ -81,11 +81,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use(lusca({
-  csrf: true,
-  xframe: 'SAMEORIGIN',
-  xssProtection: true
-}));
+// app.use(lusca({
+//   csrf: true,
+//   xframe: 'SAMEORIGIN',
+//   xssProtection: true
+// }));
 app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
