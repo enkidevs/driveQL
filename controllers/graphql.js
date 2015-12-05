@@ -1,9 +1,31 @@
+import {
+  graphql,
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString
+} from 'graphql';
+
+var schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'RootQueryType',
+    fields: {
+      hello: {
+        type: GraphQLString,
+        resolve() {
+          return 'world';
+        }
+      }
+    }
+  })
+});
+
 /**
  * GET /
  * Home page.
  */
-exports.index = function(req, res) {
-  res.render('home', {
-    title: 'Home'
+export function index(req, res) {
+  let query = '{hello}';
+  graphql(schema, query).then(result => {
+    res.send(result);
   });
 };
