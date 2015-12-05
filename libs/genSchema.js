@@ -6,6 +6,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLBoolean,
   GraphQLList
 } from 'graphql';
 
@@ -41,6 +42,43 @@ function sanitize(name) {
   return clean;
 }
 
+function getBasicTypeFromData(field, data) {
+  const vals = data.map(x => x[field]).filter(x => !!x);
+  if (!vals.length) {
+    return {
+      description: ' \n\n Unknown type. ' +
+        'Could not infer type from data because all values ' +
+        'were empty',
+      type: GraphQLString,
+    }
+  }
+  if (
+    vals.every(x => x == 0 || x == 1) ||
+    vals.every(x => x == true || x == false)
+  ) {
+    data.forEach(x => {
+      x[field] = (x[field] == 0) ? false : !!x[field];
+    })
+    return {
+      description: '',
+      type: GraphQLBoolean,
+    }
+  }
+  if (vals.every(isNormalInteger)) {
+    return {
+      description: '\n' +
+        'Min value: ' + Math.min.apply({}, vals) + '\n' +
+        'Max value: ' + Math.max.apply({}, vals),
+      type: GraphQLInt,
+    }
+  }
+  return {
+    description: '' +
+      'Examples:\n' + vals.slice(0, 3).join('\n'),
+    type: GraphQLString,
+  }
+}
+
 function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
   return new GraphQLObjectType({
     name: sanitize(name),
@@ -50,7 +88,7 @@ function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById)
       // inferring types (Int or String) from first row
       Object.keys(firstRow).forEach(fieldName => {
         var val = firstRow[fieldName];
-        var type;
+        var {type, description} = getBasicTypeFromData(fieldName, data);
         var relation = false;
         var normalizedName = fieldName;
         var sheetName = fieldName.slice(0, -2);
@@ -60,12 +98,10 @@ function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById)
           relation = true;
         } else if (fieldName === 'id'){
           type = GraphQLID;
-        } else {
-          type = isNormalInteger(val) ? GraphQLInt : GraphQLString;
         }
         fieldsFromData[normalizedName] = {
           type,
-          description: 'Example value: ' + val,
+          description,
           resolve: (row) => {
             if (relation) {
               return getRowFromSheetById(sheetName, row[fieldName]);
