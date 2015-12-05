@@ -5,6 +5,8 @@ import {
   GraphQLString
 } from 'graphql';
 
+import getSchemaFromFilename from '../libs/getSchemaFromFilename';
+
 var schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'RootQueryType',
@@ -24,7 +26,14 @@ var schema = new GraphQLSchema({
  * Home page.
  */
 export function index(req, res) {
-  let { query } = req.query;
+  let {
+    file,
+    query
+  } = req.query;
+  let data = getSchemaFromFilename(file);
+  data.then((d) => {
+    console.log(d);
+  })
   graphql(schema, query).then(result => {
     res.send(result);
   });
