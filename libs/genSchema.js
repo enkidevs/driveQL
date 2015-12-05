@@ -39,36 +39,36 @@ function sanitize(name) {
 }
 
 function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
-  var firstRow = data[0];
-  var fieldsFromData = {};
-  // inferring types (Int or String) from first row
-  Object.keys(firstRow).forEach(fieldName => {
-    var val = firstRow[fieldName];
-    var type;
-    var relation = false;
-    var normalizedName = fieldName;
-    if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
-      var sheetName = fieldName.slice(0, -2);
-      normalizedName = sheetName;
-      type = sheetSchemas[sheetName];
-      relation = true;
-    } else {
-      type = isNormalInteger(val) ? GraphQLInt : GraphQLString;
-    }
-    fieldsFromData[normalizedName] = {
-      type,
-      description: 'Example value: ' + val,
-      resolve: (row) => {
-        if (relation) {
-          return getRowFromSheetById(fieldName.slice(0, -2), row[fieldName]);
-        }
-        return row[fieldName];
-      }
-    }
-  });
   return new GraphQLObjectType({
     name: sanitize(name),
     fields: () => {
+      var firstRow = data[0];
+      var fieldsFromData = {};
+      // inferring types (Int or String) from first row
+      Object.keys(firstRow).forEach(fieldName => {
+        var val = firstRow[fieldName];
+        var type;
+        var relation = false;
+        var normalizedName = fieldName;
+        if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
+          var sheetName = fieldName.slice(0, -2);
+          normalizedName = sheetName;
+          type = sheetSchemas[sheetName];
+          relation = true;
+        } else {
+          type = isNormalInteger(val) ? GraphQLInt : GraphQLString;
+        }
+        fieldsFromData[normalizedName] = {
+          type,
+          description: 'Example value: ' + val,
+          resolve: (row) => {
+            if (relation) {
+              return getRowFromSheetById(fieldName.slice(0, -2), row[fieldName]);
+            }
+            return row[fieldName];
+          }
+        }
+      });
       return fieldsFromData;
     },
   });
