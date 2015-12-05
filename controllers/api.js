@@ -110,18 +110,31 @@ exports.getGoogleFile = function(req, res, next) {
   if (!file) { return next(new Error('no file with this id')); }
   var token = _.find(req.user.tokens, { kind: 'google' });
 
-  downloadGoogleSpreadsheet(token, file, () => {
-    console.log('done')
-  });
-  User.findById(req.user.id, function(err, user) {
-    if (err) {
-      return next(err);
-    }
-    user.apiFiles.push(file);
-    user.save(() => {
-      res.render('api/file', {
-        file,
-      });
+  var alreadyHave = req.user.apiFiles.find(f => f.id === file.id);
+  if (!alreadyHave || new Date(alreadyHave.modifiedDate) !== new Date(file.modifiedDate)) {
+    downloadGoogleSpreadsheet(token, file, () => {
+      console.log('done')
+    });
+    User.findById(req.user.id, function(err, user) {
+      if (err) {
+        return next(err);
+      }
+      if (alreadyHave) {
+        user.apiFiles = user.apiFiles.map(f => f.id === file.id ? file : f);
+      } else {
+        user.apiFiles.push(file);
+      }
+      user.save(() => {
+        res.render('api/file', {
+          file,
+        });
+      })
     })
-  })
+    return;
+  }
+
+  res.render('api/file', {
+    file,
+  });
+
 };
