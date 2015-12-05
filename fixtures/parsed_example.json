@@ -1,0 +1,28 @@
+{
+  "powers": [
+    {
+      "id": "123",
+      "name": "Ted",
+      "age": "12",
+      "power": "flies"
+    },
+    {
+      "id": "124",
+      "name": "Sophie",
+      "age": "23",
+      "power": "lazers"
+    }
+  ],
+  "emails": [
+    {
+      "id": "123",
+      "name": "Ted",
+      "email": "ted@nk.com"
+    },
+    {
+      "id": "124",
+      "name": "Sophie",
+      "email": "soph@nk.com"
+    }
+  ]
+}
