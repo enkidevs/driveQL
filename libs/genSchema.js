@@ -1,3 +1,5 @@
+import {parseAllFiles} from '../libs/parsing';
+
 import {
   GraphQLID,
   GraphQLSchema,
@@ -175,5 +177,11 @@ function schemaFromSpreadSheetsObj(data) {
   });
 }
 
+function genSchema() {
+  const data = parseAllFiles('./.cached_files');
+  global.graphQLSchema = schemaFromSpreadSheetsObj(data);
+}
+
 module.exports.schemaFromSpreadSheet = schemaFromSpreadSheet;
 module.exports.schemaFromSpreadSheetsObj = schemaFromSpreadSheetsObj;
+module.exports.genSchema = genSchema;

@@ -142,6 +142,9 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 var graphqloldController = require('./controllers/graphql_old');
 app.get('/graphqlold', graphqloldController.index);
 
+
+const genSchema = require('./libs/genSchema').genSchema;
+genSchema();
 var graphiqlController = require('./controllers/graphql');
 app.use('/graphql', graphiqlController);
 
