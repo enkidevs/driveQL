@@ -10,6 +10,8 @@ var refresh = require('passport-oauth2-refresh');
 var secrets = require('../config/secrets');
 var google = require('googleapis');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
+import {parseAllFiles} from '../libs/parsing';
+import {schemaFromSpreadSheetsObj} from '../libs/genSchema';
 
 /**
 * GET /api
@@ -140,6 +142,8 @@ exports.getGoogleFile = function(req, res, next) {
   var alreadyHave = req.user.apiFiles.find(f => f.id === file.id);
   if (!alreadyHave || new Date(alreadyHave.modifiedDate) !== new Date(file.modifiedDate)) {
     downloadGoogleSpreadsheet(token, file, () => {
+      const data = parseAllFiles('./.cached_files');
+      global.graphQLSchema = schemaFromSpreadSheetsObj(data);
       console.log('done')
     });
     User.findById(req.user.id, function(err, user) {
