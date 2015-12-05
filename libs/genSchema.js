@@ -50,8 +50,8 @@ function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById)
         var type;
         var relation = false;
         var normalizedName = fieldName;
+        var sheetName = fieldName.slice(0, -2);
         if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
-          var sheetName = fieldName.slice(0, -2);
           normalizedName = sheetName;
           type = sheetSchemas[sheetName];
           relation = true;
@@ -63,7 +63,7 @@ function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById)
           description: 'Example value: ' + val,
           resolve: (row) => {
             if (relation) {
-              return getRowFromSheetById(fieldName.slice(0, -2), row[fieldName]);
+              return getRowFromSheetById(sheetName, row[fieldName]);
             }
             return row[fieldName];
           }
@@ -80,7 +80,7 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
   Object.keys(obj).reverse().forEach(sheetName => {
     var normalizedName = sheetName.replace(/s$/,'');
     sheetSchemas[normalizedName] = schemaFromArrayOfObjects(normalizedName, obj[sheetName], sheetSchemas,
-      (sheet, id) => obj[sheetName].find(r => r.id === id));
+      (sheet, id) => obj[(sheet + 's').replace(/ss$/,'s')].find(r => r.id === id));
     var args = {
       row: {
         type: GraphQLInt,
