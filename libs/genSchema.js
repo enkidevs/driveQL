@@ -57,25 +57,36 @@ function schemaFromSpreadSheet(name, obj) {
   var connectionToFields = {};
   Object.keys(obj).forEach(sheetName => {
     var sheetSchema = schemaFromArrayOfObjects(sheetName, obj[sheetName]);
-    fieldsFromData[sheetName] = {
+    var args = {
+      row: {
+        type: GraphQLInt,
+      },
+    };
+    var firstRow = obj[sheetName][0];
+    var keys = Object.keys(firstRow);
+    keys.forEach(key => {
+      var val = firstRow[key];
+      args[key] = {
+        type: isNormalInteger(val) ? GraphQLInt : GraphQLString
+      }
+    })
+    fieldsFromData[sheetName.replace(/s$/,'')] = {
       type: sheetSchema,
       description: sheetName + ' sheet',
-      args: {
-        row: {
-          type: GraphQLInt,
-        },
-        id: {
-          type: GraphQLString,
+      args,
+      resolve: (root, a) => {
+        if (typeof(a.row) !== "undefined") {
+          return obj[sheetName][a.row];
         }
-      },
-      resolve: (root, {row, id}) => {
-        if (id) {
-          return obj[sheetName].find(r => r.id == id);
+        if (Object.keys(a||{}).length > 0) {
+          var k = Object.keys(a)[0];
+          return obj[sheetName].find(r => {
+            return r[k] == a[k];
+          })
         }
-        return obj[sheetName][row];
       },
     }
-    fieldsFromData[sheetName + 's'] = {
+    fieldsFromData[sheetName.replace(/s$/,'') + 's'] = {
       type: new GraphQLList(sheetSchema),
       description: '',
       args: connectionArgs,
