@@ -2,7 +2,7 @@ const parseFile = require('../libs/parsing.js').parseFile;
 
 function test(path) {
   console.log(path + ':')
-  console.log(parseFile(path));
+  console.log(JSON.stringify(parseFile(path), null, 2));
 }
 
 test('../fixtures/TestTables.ods');
