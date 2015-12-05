@@ -13,11 +13,11 @@ function schemaFromData() {
         id: {
           type: GraphQLInt,
           resolve: (row) => row.id,
-        }
+        },
         name: {
           type: GraphQLString,
           resolve: (row) => row.name,
-        }
+        },
         email: {
           type: GraphQLString,
           resolve: (row) => row.email,
