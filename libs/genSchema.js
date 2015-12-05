@@ -1,7 +1,9 @@
-var GraphQLObjectType = require('graphql').GraphQLObjectType;
-var GraphQLSchema = require('graphql').GraphQLSchema;
-var GraphQLInt = require('graphql').GraphQLInt;
-var GraphQLString = require('graphql').GraphQLString;
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLInt
+} from 'graphql';
 
 let count = 0;
 
@@ -28,12 +30,10 @@ function schemaFromArrayOfObjects(name, data) {
       resolve: (row) => row[fieldName]
     }
   });
-  return new GraphQLSchema({
-    query: new GraphQLObjectType({
-      name: sanitize(name),
-      fields: () => fieldsFromData,
-    })
-  })
+  return new GraphQLObjectType({
+    name: sanitize(name),
+    fields: () => fieldsFromData,
+  });
 }
 
 function schemaFromSpreadSheet(name, obj) {
@@ -45,11 +45,14 @@ function schemaFromSpreadSheet(name, obj) {
       resolve: (root, {sname}) => obj[sname],
     }
   });
-  return new GraphQLObjectType({
+  let ot = new GraphQLObjectType({
     name: sanitize(name),
     description: 'File ' + name,
     fields: () => fieldsFromData,
-  })
+  });
+  return new GraphQLSchema({
+    query: ot
+  });
 }
 
 module.exports.schemaFromSpreadSheet = schemaFromSpreadSheet;
