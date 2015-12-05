@@ -2,7 +2,8 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList
 } from 'graphql';
 
 import {
@@ -56,7 +57,6 @@ function schemaFromSpreadSheet(name, obj) {
   var connectionToFields = {};
   Object.keys(obj).forEach(sheetName => {
     var sheetSchema = schemaFromArrayOfObjects(sheetName, obj[sheetName]);
-    var {connectionType} = connectionDefinitions({name: sheetName + 'ConnectionType', nodeType: sheetSchema});
     fieldsFromData[sheetName] = {
       type: sheetSchema,
       description: sheetName + ' sheet',
@@ -64,19 +64,22 @@ function schemaFromSpreadSheet(name, obj) {
         row: {
           type: GraphQLInt,
         },
+        id: {
+          type: GraphQLString,
+        }
       },
-      resolve: (root, {row}) => {
+      resolve: (root, {row, id}) => {
+        if (id) {
+          return obj[sheetName].find(r => r.id == id);
+        }
         return obj[sheetName][row];
       },
     }
     fieldsFromData[sheetName + 's'] = {
-      type: connectionType,
+      type: new GraphQLList(sheetSchema),
       description: '',
       args: connectionArgs,
-      resolve: (root, args) => connectionFromArray(
-        obj[sheetName],
-        args
-      ),
+      resolve: (root, args) => obj[sheetName],
     }
   });
   let ot = new GraphQLObjectType({
