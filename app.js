@@ -177,6 +177,9 @@ app.get('/auth/venmo/callback', passport.authorize('venmo', { failureRedirect: '
 });
 
 
+var graphqlController = require('./controllers/graphql');
+app.get('/graphql', graphqlController.index);
+
 /**
  * Error Handler.
  */
