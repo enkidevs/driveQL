@@ -116,8 +116,32 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
     fieldsFromData[normalizedName + 's'] = {
       type: new GraphQLList(sheetSchemas[normalizedName]),
       description: '',
-      args: connectionArgs,
-      resolve: (root, args) => obj[sheetName],
+      args: {
+        limit:    {type: GraphQLInt},
+        offset:   {type: GraphQLInt},
+        sort:  {type: GraphQLString},
+        sortDesc:  {type: GraphQLString},
+      },
+      resolve: (root, args) => {
+        let data = obj[sheetName]
+        if (args.sort) {
+          data = data.sort((x, y) =>
+            x[args.sort] >= y[args.sort] ? 1 : -1
+          );
+        }
+        if (args.sortDesc) {
+          data = data.sort((x, y) =>
+            x[args.sortDesc] >= y[args.sortDesc] ? 1 : -1
+          );
+        }
+        if (args.offset) {
+          data = data.slice(args.offset);
+        }
+        if (args.limit) {
+          data = data.slice(0, args.limit);
+        }
+        return data;
+      },
     }
   });
   let ot = new GraphQLObjectType({
