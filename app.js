@@ -1,3 +1,5 @@
+require("babel-register");
+
 /**
  * Module dependencies.
  */
