@@ -1,8 +1,12 @@
+import {parseAllFiles} from '../libs/parsing';
+
 import {
+  GraphQLID,
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLBoolean,
   GraphQLList
 } from 'graphql';
 
@@ -38,37 +42,74 @@ function sanitize(name) {
   return clean;
 }
 
+function getBasicTypeFromData(field, data) {
+  const vals = data.map(x => x[field]).filter(x => !!x);
+  if (!vals.length) {
+    return {
+      description: ' \n\n Unknown type. ' +
+        'Could not infer type from data because all values ' +
+        'were empty',
+      type: GraphQLString,
+    }
+  }
+  if (
+    vals.every(x => x == 0 || x == 1) ||
+    vals.every(x => x == true || x == false)
+  ) {
+    data.forEach(x => {
+      x[field] = (x[field] == 0) ? false : !!x[field];
+    })
+    return {
+      description: '',
+      type: GraphQLBoolean,
+    }
+  }
+  if (vals.every(isNormalInteger)) {
+    return {
+      description: '\n' +
+        'Min value: ' + Math.min.apply({}, vals) + '\n' +
+        'Max value: ' + Math.max.apply({}, vals),
+      type: GraphQLInt,
+    }
+  }
+  return {
+    description: '' +
+      'Examples:\n' + vals.slice(0, 3).join('\n'),
+    type: GraphQLString,
+  }
+}
+
 function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
-  var firstRow = data[0];
-  var fieldsFromData = {};
-  // inferring types (Int or String) from first row
-  Object.keys(firstRow).forEach(fieldName => {
-    var val = firstRow[fieldName];
-    var type;
-    var relation = false;
-    var normalizedName = fieldName;
-    if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
-      var sheetName = fieldName.slice(0, -2);
-      normalizedName = sheetName;
-      type = sheetSchemas[sheetName];
-      relation = true;
-    } else {
-      type = isNormalInteger(val) ? GraphQLInt : GraphQLString;
-    }
-    fieldsFromData[normalizedName] = {
-      type,
-      description: 'Example value: ' + val,
-      resolve: (row) => {
-        if (relation) {
-          return getRowFromSheetById(fieldName.slice(0, -2), row[fieldName]);
-        }
-        return row[fieldName];
-      }
-    }
-  });
   return new GraphQLObjectType({
     name: sanitize(name),
     fields: () => {
+      var firstRow = data[0];
+      var fieldsFromData = {};
+      // inferring types (Int or String) from first row
+      Object.keys(firstRow).forEach(fieldName => {
+        var val = firstRow[fieldName];
+        var {type, description} = getBasicTypeFromData(fieldName, data);
+        var relation = false;
+        var normalizedName = fieldName;
+        var sheetName = fieldName.slice(0, -2);
+        if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
+          normalizedName = sheetName;
+          type = sheetSchemas[sheetName];
+          relation = true;
+        } else if (fieldName === 'id'){
+          type = GraphQLID;
+        }
+        fieldsFromData[normalizedName] = {
+          type,
+          description,
+          resolve: (row) => {
+            if (relation) {
+              return getRowFromSheetById(sheetName, row[fieldName]);
+            }
+            return row[fieldName];
+          }
+        }
+      });
       return fieldsFromData;
     },
   });
@@ -80,7 +121,7 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
   Object.keys(obj).reverse().forEach(sheetName => {
     var normalizedName = sheetName.replace(/s$/,'');
     sheetSchemas[normalizedName] = schemaFromArrayOfObjects(normalizedName, obj[sheetName], sheetSchemas,
-      (sheet, id) => obj[sheetName].find(r => r.id === id));
+      (sheet, id) => obj[(sheet + 's').replace(/ss$/,'s')].find(r => r.id === id));
     var args = {
       row: {
         type: GraphQLInt,
@@ -113,8 +154,32 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
     fieldsFromData[normalizedName + 's'] = {
       type: new GraphQLList(sheetSchemas[normalizedName]),
       description: '',
-      args: connectionArgs,
-      resolve: (root, args) => obj[sheetName],
+      args: {
+        limit:    {type: GraphQLInt},
+        offset:   {type: GraphQLInt},
+        sort:  {type: GraphQLString},
+        sortDesc:  {type: GraphQLString},
+      },
+      resolve: (root, args) => {
+        let data = obj[sheetName]
+        if (args.sort) {
+          data = data.sort((x, y) =>
+            x[args.sort] >= y[args.sort] ? 1 : -1
+          );
+        }
+        if (args.sortDesc) {
+          data = data.sort((x, y) =>
+            x[args.sortDesc] >= y[args.sortDesc] ? 1 : -1
+          );
+        }
+        if (args.offset) {
+          data = data.slice(args.offset);
+        }
+        if (args.limit) {
+          data = data.slice(0, args.limit);
+        }
+        return data;
+      },
     }
   });
   let ot = new GraphQLObjectType({
@@ -148,5 +213,11 @@ function schemaFromSpreadSheetsObj(data) {
   });
 }
 
+function genSchema() {
+  const data = parseAllFiles('./.cached_files');
+  global.graphQLSchema = schemaFromSpreadSheetsObj(data);
+}
+
 module.exports.schemaFromSpreadSheet = schemaFromSpreadSheet;
 module.exports.schemaFromSpreadSheetsObj = schemaFromSpreadSheetsObj;
+module.exports.genSchema = genSchema;

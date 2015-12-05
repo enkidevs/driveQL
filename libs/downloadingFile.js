@@ -12,4 +12,8 @@ module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => 
       'bearer': token.accessToken
     }
   }).pipe(file);
+
+  file.on('finish', function(){
+    callback();
+  });
 }

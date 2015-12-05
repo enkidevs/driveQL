@@ -1,14 +1,6 @@
 const router = require('express').Router();
 const {graphql} = require('graphql');
 
-import {parseAllFiles} from '../libs/parsing';
-import {schemaFromSpreadSheetsObj} from '../libs/genSchema';
-
-function getSchema() {
-  const data = parseAllFiles('./.cached_files');
-  return schemaFromSpreadSheetsObj(data);
-}
-
 const GRAPHIQL_VERSION = '0.3.1';
 /* eslint-disable  */
 function renderGraphiQL({query, variables, version = GRAPHIQL_VERSION} = {}) {
@@ -20,6 +12,18 @@ function renderGraphiQL({query, variables, version = GRAPHIQL_VERSION} = {}) {
         <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
         <script src="//cdn.jsdelivr.net/react/0.14.1/react.min.js"></script>
         <script src="//cdn.jsdelivr.net/graphiql/${version}/graphiql.min.js"></script>
+        <style>
+        .CodeMirror-hint-information .content {
+            -webkit-line-clamp: none;
+            max-height: inherit;
+            white-space: pre;
+        }
+        .CodeMirror-hint-information .content p {
+          -webkit-line-clamp: none;
+          max-height: inherit;
+          white-space: pre;
+        }
+        </style>
       </head>
       <body>
         Loading...
@@ -101,7 +105,7 @@ router.get('/', function getGraphiql(req, res) {
 });
 router.post('/', function postGraphql(req, res) {
   const {query, variables} = Object.assign({}, req.body, req.query);
-  return graphql(getSchema(), query, req, variables)
+  return graphql(global.graphQLSchema, query, req, variables)
     .then((result) => {
       if (result.errors) {
         const message = result.errors.map((error) => error.message).join('\n');
