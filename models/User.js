@@ -26,6 +26,7 @@ var userSchema = new mongoose.Schema({
   resetPasswordExpires: Date,
 
   googleFiles: Array,
+  apiFiles: Array,
 });
 
 /**

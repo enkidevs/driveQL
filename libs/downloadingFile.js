@@ -2,7 +2,10 @@ var request = require('request');
 var fs = require('fs');
 
 module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => {
-  var file = fs.createWriteStream(fileToDownload.id + ".xlsx");
+  var cleanTitle = fileToDownload.title.replace(/ /g, '_');
+  var file = fs.createWriteStream(
+    '.cached_files/' + cleanTitle + '.xlsx'
+  );
   request(fileToDownload.exportLinks['officedocument']
   , {
     'auth': {

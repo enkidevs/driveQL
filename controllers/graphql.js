@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const {graphql} = require('graphql');
 
-
 import {parseAllFiles} from '../libs/parsing';
 import {schemaFromSpreadSheetsObj} from '../libs/genSchema';
-const data = parseAllFiles('./fixtures');
-const schema = schemaFromSpreadSheetsObj(data);
+
+function getSchema() {
+  const data = parseAllFiles('./.cached_files');
+  return schemaFromSpreadSheetsObj(data);
+}
 
 const GRAPHIQL_VERSION = '0.3.1';
 /* eslint-disable  */
@@ -99,7 +101,7 @@ router.get('/', function getGraphiql(req, res) {
 });
 router.post('/', function postGraphql(req, res) {
   const {query, variables} = Object.assign({}, req.body, req.query);
-  return graphql(schema, query, req, variables)
+  return graphql(getSchema(), query, req, variables)
     .then((result) => {
       if (result.errors) {
         const message = result.errors.map((error) => error.message).join('\n');

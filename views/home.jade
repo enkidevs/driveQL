@@ -2,10 +2,12 @@ extends layout
 
 block content
   h1 DriveQL
-  p.lead Upload your files to GDrive, have them available with a useful API
+  br
+  p.lead 1. Sync your files from Google Drive.
+  p.lead 2. Access your data with the GraphQL API.
   hr
   .row
-    if !user
-      | Login to see your files
-    else
-      a.button(href='/api/files') Go to your files
+  if !user
+    | Login to see your files
+  else
+    a.button(href='/api/files') Go to your files
