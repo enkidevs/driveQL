@@ -8,6 +8,7 @@ var querystring = require('querystring');
 
 var secrets = require('../config/secrets');
 var google = require('googleapis');
+var downloadGoogleSpreadsheet = require('../libs/downloadingFile');
 
 /**
 * GET /api
@@ -30,6 +31,7 @@ exports.getGoogleFiles = function(req, res, next) {
     secrets.google.clientSecret,
     secrets.google.callbackURL
   );
+  console.log(token)
   oauth2Client.setCredentials({
     access_token: token.accessToken,
     refresh_token: token.refreshToken,
@@ -43,9 +45,28 @@ exports.getGoogleFiles = function(req, res, next) {
     if (err) {
       return next(err);
     }
-    console.log(result.items)
-    res.render('api/files', {
-      files: result.items,
+    req.user.googleFiles = result.items;
+    req.user.save(() => {
+      res.render('api/files', {
+        files: result.items,
+      });
     });
-  })
+  });
+};
+
+/**
+ * GET /api/file
+ */
+exports.getGoogleFile = function(req, res, next) {
+  var fileId = req.params.file;
+  var file = req.user.googleFiles.find(f => f.id === fileId);
+  if (!file) { return next(new Error('no file with this id')); }
+
+  var token = _.find(req.user.tokens, { kind: 'google' });
+
+  downloadGoogleSpreadsheet(token, file, () => {
+    res.render('api/file', {
+      file,
+    });
+  });
 };
