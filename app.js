@@ -139,6 +139,9 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 var graphqlController = require('./controllers/graphql');
 app.get('/graphql', graphqlController.index);
 
+var graphiqlController = require('./controllers/graphiql');
+app.use('/graphiql', graphiqlController);
+
 /**
  * Error Handler.
  */
