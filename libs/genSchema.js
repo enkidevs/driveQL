@@ -27,12 +27,18 @@ function schemaFromArrayOfObjects(name, data) {
     fieldsFromData[fieldName] = {
       type: isNormalInteger(val) ? GraphQLInt : GraphQLString,
       description: 'Example value: ' + val,
-      resolve: (row) => row[fieldName]
+      resolve: (row) => {
+        console.log('resolving ', row, fieldName);
+        return row[fieldName];
+      }
     }
   });
   return new GraphQLObjectType({
     name: sanitize(name),
-    fields: () => fieldsFromData,
+    fields: () => {
+      console.log('hello from schemaFromArrayOfObjects')
+      return fieldsFromData;
+    },
   });
 }
 
@@ -42,7 +48,10 @@ function schemaFromSpreadSheet(name, obj) {
     fieldsFromData[sheetName] = {
       type: schemaFromArrayOfObjects(sheetName, obj[sheetName]),
       description: sheetName + ' sheet',
-      resolve: (root, {sname}) => obj[sname],
+      resolve: () => {
+        console.log('resolve from schemaFromSpreadSheet for sheet', sheetName)
+        return obj[sheetName];
+      },
     }
   });
   let ot = new GraphQLObjectType({
