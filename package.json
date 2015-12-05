@@ -31,6 +31,7 @@
     "express-session": "^1.12.1",
     "express-validator": "^2.18.0",
     "fbgraph": "^1.1.0",
+    "fs-promise": "^0.3.1",
     "github-api": "^0.10.7",
     "googleapis": "2.1.6",
     "graphql": "^0.4.14",
