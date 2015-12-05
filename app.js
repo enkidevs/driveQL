@@ -123,7 +123,6 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
 /**
  * API examples routes.
  */
-app.get('/api', apiController.getApi);
 app.get('/api/files', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFiles);
 // app.get('/api/nyt', apiController.getNewYorkTimes);
 // app.get('/api/aviary', apiController.getAviary);

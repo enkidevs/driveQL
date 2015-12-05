@@ -6,11 +6,6 @@ block content
   hr
   .row
     if !user
-      form.form-horizontal(method='POST')
-        .form-group
-          .col-sm-offset-3.col-sm-7
-            a.btn.btn-block.btn-google.btn-social(href='/auth/google')
-              i.fa.fa-google-plus
-              | Sign in with Google
+      | Login to see your files
     else
       a.button(href='/api/files') Go to your files
