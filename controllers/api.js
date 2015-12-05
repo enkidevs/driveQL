@@ -86,12 +86,8 @@ exports.getGoogleFiles = function(req, res, next) {
               officedocument: f.exportLinks['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
             }
           }
-          // var file resource = {
-          //   'id': 'someRandomId',
-          //   'type':
-          // }
-          // var watchReq = drive.files.watch({'fileId': f.id}, function(channel) {console.log('watch result:', channel);});
-          // watchReq.execute();
+          var watchReq = drive.files.watch({'fileId': f.id}, function(channel) {console.log('watch result:', channel);});
+
           return f;
         });
         user.save((err) => {
