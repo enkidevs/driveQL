@@ -57,6 +57,7 @@
     "twilio": "^2.5.2",
     "twit": "^2.1.1",
     "validator": "^4.3.0",
+    "xlsx": "^0.8.0",
     "yui": "^3.18.1"
   },
   "devDependencies": {
