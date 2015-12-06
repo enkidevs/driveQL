@@ -7,13 +7,15 @@ block content
       | Now, I want you to put your data on the web.
       cite
         a(href="https://www.ted.com/talks/tim_berners_lee_on_the_next_web/") Tim Berners-Lee
-  h1 DriveQL
-  br
-  p.lead 1. Sync your files from Google Drive.
-  p.lead 2. Access your data with the GraphQL API.
-  hr
-  .row
-  if !user
-    | Login to see your files
-  else
-    a.button(href='/api/files') Go to your files
+    img(src="/tbl.png")
+  .explainations
+    h1 DriveQL
+    br
+    p.lead 1. Sync your files from Google Drive.
+    p.lead 2. Access your data with the GraphQL API.
+    hr
+    .row
+    if !user
+      | Login to see your files
+    else
+      a.button(href='/api/files') Go to your files

@@ -157,7 +157,9 @@ footer {
   width: 500px;
   background: $brand-primary;
   color: #FFF;
-  margin: 100px auto;
+  margin: 80px;
+  margin-left: calc(100% - 500px);
+  margin-right: 0;
   padding: 50px;
   box-shadow: 0 0 30px #aaa;
   cite {
@@ -166,4 +168,19 @@ footer {
       color: #FFF;
     }
   }
+  img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0.3;
+
+  }
+}
+
+.explainations {
+  position: absolute;
+  background: #FFF;
+  padding: 50px;
+  box-shadow: 0 0 30px #aaa;
+  top: 200px;
 }
