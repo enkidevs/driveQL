@@ -194,10 +194,10 @@ exports.getGoogleFile = function getGoogleFile(req, res, next) {
 
   downloadGoogleSpreadsheet(token, file, () => {
     genSchema();
-    console.log('done')
+    console.log('done');
   });
 
-  var oauth2Client = new OAuth2(
+  const oauth2Client = new OAuth2(
     secrets.google.clientID,
     secrets.google.clientSecret,
     secrets.google.callbackURL
@@ -208,37 +208,30 @@ exports.getGoogleFile = function getGoogleFile(req, res, next) {
   });
 
 
-  var drive = google.drive({ version: 'v2', auth: oauth2Client });
-  var resource = {
+  const drive = google.drive({ version: 'v2', auth: oauth2Client });
+  const resource = {
     'id': 'file--' + file.id + '__user--' + req.user.id,
     'type': 'web_hook',
-    'address': 'https://driveql.herokuapp.com/notification'
-  }
-  var watchReq = drive.files.watch({
+    'address': 'https://driveql.herokuapp.com/notification',
+  };
+
+  drive.files.watch({
     'fileId': file.id,
-    'resource': resource
-  }, function(err, res) {
-    if (err) { console.log('error on watch:', err); }
-    else { console.log('watch result:', res); }
+    resource,
+  }, (err, result) => {
+    if (err) { console.log('error on watch:', err);
+    } else { console.log('watch result:', result); }
   });
 
 
-  User.findById(req.user.id, function(err, user) {
+  return User.findById(req.user.id, (err, user) => {
     if (err) {
       return next(err);
     }
     user.apiFiles.push(file);
 
     user.save(() => {
-      return getGoogleFiles(req, res, next)
-      // res.render('api/file', {
-      //   file,
-      // });
-    })
-  })
-  return;
-
-  res.render('files/file', {
-    file,
+      return getGoogleFiles(req, res, next);
+    });
   });
 };
