@@ -8,7 +8,7 @@ const refresh = require('passport-oauth2-refresh');
 const secrets = require('../config/secrets');
 const google = require('googleapis');
 const fs = require('fs');
-const {guid} = require('../libs/guid');
+const request = require('request');
 const {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
 const {genSchema} = require('../libs/genSchema');
 
@@ -155,15 +155,26 @@ exports.unsyncFileFromFullList = function unsyncFileFromFullList(req, res, next)
     if (err) {
       return next(err);
     }
+    let fileToDelete;
     user.apiFiles = user.apiFiles.filter(
       f => {
         if (f.id === req.params.id) {
           deleteCachedFile(f);
+          fileToDelete = f;
           return false;
         }
         return true;
       }
     );
+
+    request('https://www.googleapis.com/drive/v2/channels/stop'
+    , {
+      method: 'POST',
+      'id': 'file--' + fileToDelete.id + '__user--' + req.user.id,
+      'resourceId': fileToDelete.resourceId,
+    });
+
+
     user.save(() => {
       return getGoogleFiles(req, res, next);
     });

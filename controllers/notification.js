@@ -8,11 +8,11 @@ const {genSchema} = require('../libs/genSchema');
  * receive a notification that one of the files has been changed.
  */
 
-exports.postNotification = function postNotification(req, res) {
+exports.postNotification = (req, res) => {
   console.log('req:', req);
 
   const uidArr = req.headers['x-goog-channel-id'].split('__user--');
-  const channelId = req.headers['x-goog-resource-id'];
+  const resourceId = req.headers['x-goog-resource-id'];
   const userId = uidArr[1];
   const fileId = uidArr[0].replace(/^file--/, '');
 
@@ -27,7 +27,7 @@ exports.postNotification = function postNotification(req, res) {
     }
     const token = _.find(user.tokens, { kind: 'google' });
     const file = user.apiFiles.find(f => f.id === fileId);
-    file.channelId = channelId;
+    file.resourceId = resourceId;
 
     downloadGoogleSpreadsheet(token, file, () => {
       genSchema();
