@@ -27,7 +27,9 @@ exports.postNotification = (req, res) => {
     }
     const token = _.find(user.tokens, { kind: 'google' });
     const file = user.apiFiles.find(f => f.id === fileId);
-    file.resourceId = resourceId;
+    if (file) {
+      file.resourceId = resourceId;
+    }
 
     downloadGoogleSpreadsheet(token, file, () => {
       genSchema();
