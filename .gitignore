@@ -29,5 +29,5 @@ Thumbs.db
 .localdb
 
 # file cache
-.cached_files/*
-!.cached_files/.keep
+#.cached_files/*
+.cached_files/.keep
