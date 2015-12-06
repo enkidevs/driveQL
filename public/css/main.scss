@@ -54,6 +54,10 @@ footer {
   padding: 0;
   border-radius: 0;
   box-shadow: 0 0 5px #ccc, inset 0 0 0 #000;
+  img {
+    width: 150px;
+    min-height: 213px;
+  }
 }
 
 // Font Icons
@@ -61,4 +65,57 @@ footer {
 
 .fa {
   margin-right: 6px;
+}
+
+.fileTitle {
+  height: 32px;
+  margin: 5px;
+  line-height: 14px;
+  font-size: 14px;
+  // background: #ff6f31;
+  // color: white;
+  // margin: 0;
+  text-align: center;
+  overflow: hidden;
+}
+
+.unsyncLink {
+  position: absolute;
+  top: 4px;
+  font-size: 20px;
+  line-height: 23px;
+  right: 18px;
+  color: red;
+  background: rgba(128, 128, 128, 0.32);
+  &:hover {
+    color: red;
+    background: rgba(128, 128, 128, 0.60);
+    text-decoration: none;
+  }
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.syncLink {
+  position: absolute;
+  top: 4px;
+  font-size: 20px;
+  line-height: 21px;
+  right: 18px;
+  color: green;
+  background: rgba(128, 128, 128, 0.32);
+  &:hover {
+    color: green;
+    background: rgba(128, 128, 128, 0.60);
+    text-decoration: none;
+  }
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  text-decoration: none;
+
 }
