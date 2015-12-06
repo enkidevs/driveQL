@@ -11735,7 +11735,6 @@ footer p, footer ul {
   margin-right: 6px;
 }
 
-<<<<<<< HEAD
 .fileTitle {
   height: 32px;
   margin: 5px;
@@ -11789,7 +11788,29 @@ footer p, footer ul {
   color: black;
   background: rgba(128, 128, 128, 0.6);
   text-decoration: none;
-=======
+}
+
+.graphqlLink {
+  position: absolute;
+  top: 4px;
+  font-size: 20px;
+  line-height: 21px;
+  right: 18px;
+  color: black;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.graphqlLink:hover {
+  color: black;
+  border: 3px solid purple;
+  text-decoration: none;
+}
+
 .background-hero {
   position: absolute;
   top: 0;
@@ -11814,26 +11835,4 @@ footer p, footer ul {
 
 .hero cite a {
   color: #FFF;
->>>>>>> playing around with the home
-}
-
-.graphqlLink {
-  position: absolute;
-  top: 4px;
-  font-size: 20px;
-  line-height: 21px;
-  right: 18px;
-  color: black;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.graphqlLink:hover {
-  color: black;
-  border: 3px solid purple;
-  text-decoration: none;
 }
