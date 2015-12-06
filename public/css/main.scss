@@ -257,3 +257,13 @@ h3 + .row {
   top: 0;
   content: 'DriveQL Playground \0000a0\0000a0';
 }
+
+p.lead.check:after {
+  content: '';
+  display: inline-block;
+  background-image: url('http://www.clipartbest.com/cliparts/Kcj/eGX/KcjeGXani.png');
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  transform: translate3d(9px,12px,0);
+}

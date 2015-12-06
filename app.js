@@ -26,6 +26,7 @@ const sass = require('node-sass-middleware');
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
+const featuresController = require('./controllers/features');
 const userController = require('./controllers/user');
 const filesController = require('./controllers/files');
 const notificationController = require('./controllers/notification');
@@ -101,6 +102,7 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
+app.get('/features', featuresController.index);
 app.get('/logout', userController.logout);
 app.post('/notification', notificationController.postNotification);
 
