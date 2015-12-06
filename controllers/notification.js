@@ -9,7 +9,7 @@ const {genSchema} = require('../libs/genSchema');
  */
 
 exports.postNotification = (req, res) => {
-  console.log('req:', req);
+  console.log('req:', req.headers);
 
   const uidArr = req.headers['x-goog-channel-id'].split('__user--');
   const resourceId = req.headers['x-goog-resource-id'];
