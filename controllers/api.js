@@ -208,7 +208,7 @@ exports.getGoogleFile = function(req, res, next) {
     var resource = {
       'id': guid(),
       'type': 'web_hook',
-      'address': 'https://driveql.herokuapp.com/notifications'
+      'address': 'https://driveql.herokuapp.com/notification'
     }
     var watchReq = drive.files.watch({
       'fileId': file.id,
