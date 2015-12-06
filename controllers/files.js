@@ -137,7 +137,7 @@ function deleteCachedFile(file, user) {
       'bearer': token.accessToken,
     },
   }, (err, res) => {
-    console.log('Unsubscribe: ', err.body, res.body);
+    console.log('Unsubscribe: ', (err || {}).body, (res || {}).body);
   });
 }
 
@@ -223,7 +223,8 @@ exports.getGoogleFile = function getGoogleFile(req, res, next) {
     'fileId': file.id,
     resource,
   }, (err, result) => {
-    if (err) { console.log('error on watch:', err);
+    if (err) {
+      console.log('error on watch:', err);
     } else { console.log('watch result:', result); }
   });
 
