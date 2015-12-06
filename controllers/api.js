@@ -95,7 +95,7 @@ exports.getGoogleFiles = function(req, res, next) {
             return next(err);
           }
           res.render('api/files', {
-            files: result.items,
+            files: result.items
           });
         });
       });

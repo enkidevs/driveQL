@@ -8,5 +8,8 @@ block content
     for file in files
       .col-xs-3.col-md-2
         a.thumbnail(href='/api/file/#{file.id}')
-          img(src='#{file.thumbnailLink}')
-          | #{file.title}
+          img(src='#{file.thumbnailLink}',
+            onerror="this.style.visibility='hidden'")
+          p.fileTitle #{file.title}
+        a.syncLink(href='/api/addsync/#{file.id}')
+          | +

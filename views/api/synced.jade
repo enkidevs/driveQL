@@ -8,7 +8,8 @@ block content
     for file in apiFiles
       .col-xs-3.col-md-2
         a.thumbnail(href='/api/file/#{file.id}')
-          img(src='#{file.thumbnailLink}')
-          | #{file.title}
-        a(href='/api/unsync/#{file.id}')
-          | unsync
+          img(src='#{file.thumbnailLink}',
+            onerror="this.style.visibility='hidden'")
+          p.fileTitle #{file.title}
+        a.unsyncLink(href='/api/unsync/#{file.id}')
+          | ✗
