@@ -9,6 +9,7 @@ function renderGraphiQL({query, variables, version = GRAPHIQL_VERSION} = {}) {
     <html>
       <head>
         <link href="//cdn.jsdelivr.net/graphiql/${version}/graphiql.css" rel="stylesheet" />
+        <link href="/css/main.css" rel="stylesheet" />
         <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
         <script src="//cdn.jsdelivr.net/react/0.14.1/react.min.js"></script>
         <script src="//cdn.jsdelivr.net/graphiql/${version}/graphiql.min.js"></script>

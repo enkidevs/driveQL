@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const refresh = require('passport-oauth2-refresh');

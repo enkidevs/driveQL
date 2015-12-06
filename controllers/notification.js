@@ -31,6 +31,12 @@ exports.postNotification = (req, res) => {
       file.resourceId = resourceId;
     }
 
+    if (!file) {
+      console.log('file not found, ', fileId, user.apiFiles.map(f => f.id));
+      res.status(200).send('OK');
+      return;
+    }
+
     downloadGoogleSpreadsheet(token, file, () => {
       genSchema();
       console.log('done');

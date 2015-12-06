@@ -222,11 +222,23 @@ function schemaFromSpreadSheetsObj(data) {
   let fieldsFromData = {};
   Object.keys(data).forEach(k => {
     const nk = removeFileExtention(k);
-    fieldsFromData[nk] = {
-      name: nk,
-      type: schemaFromSpreadSheet(k, data[k], true),
-      resolve: () => data[k],
-    };
+    let schema;
+    try {
+      schema = {
+        name: nk,
+        type: schemaFromSpreadSheet(k, data[k], true),
+        resolve: () => data[k],
+      };
+    } catch (e) {
+      console.log(e);
+      schema = {
+        name: nk,
+        description: 'Broken data',
+        type: GraphQLString,
+        resolve: () => 'broken data',
+      };
+    }
+    fieldsFromData[nk] = schema;
   });
   if (!Object.keys(data).length) {
     fieldsFromData = {
