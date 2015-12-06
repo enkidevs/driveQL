@@ -215,7 +215,6 @@ exports.getGoogleFile = function(req, res, next) {
 
 
   var drive = google.drive({ version: 'v2', auth: oauth2Client });
-  var uid = guid();
   var resource = {
     'id': 'file:' + file.id + '__user:' + req.user.id,
     'type': 'web_hook',
@@ -224,7 +223,10 @@ exports.getGoogleFile = function(req, res, next) {
   var watchReq = drive.files.watch({
     'fileId': file.id,
     'resource': resource
-  }, function(err, res) {console.log('watch result:', res);});
+  }, function(err, res) {
+    if (err) { console.log('error on watch:', err); }
+    else { console.log('watch result:', res); }
+  });
 
 
   User.findById(req.user.id, function(err, user) {

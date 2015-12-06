@@ -13,6 +13,9 @@ exports.postNotification = function(req, res, next) {
   var userId = uidArr[1];
   var fileId = uidArr[0].replace(/^file:/, '');
 
+  console.log('\n\n\n\nuserID: ', userId);
+  console.log('\n\n\n\nfileID: ', fileId);
+
   var user = User.findById(userId, function(err, user) {
     if (err) {
       console.log(err);
@@ -23,7 +26,7 @@ exports.postNotification = function(req, res, next) {
 
   downloadGoogleSpreadsheet(token, file, () => {
     genSchema();
-    console.log('done')
+    console.log('done');
   });
 
   user.apiFiles = user.apiFiles.map(f => f.id === fileId ? file : f);
