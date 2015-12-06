@@ -195,55 +195,49 @@ exports.getGoogleFile = function(req, res, next) {
   var OAuth2 = google.auth.OAuth2;
   var token = _.find(req.user.tokens, { kind: 'google' });
 
-  var alreadyHave = req.user.apiFiles.find(f => f.id === file.id);
-  if (!alreadyHave || new Date(alreadyHave.modifiedDate) !== new Date(file.modifiedDate)) {
-    downloadGoogleSpreadsheet(token, file, () => {
-      genSchema();
-      console.log('done')
-    });
+  downloadGoogleSpreadsheet(token, file, () => {
+    genSchema();
+    console.log('done')
+  });
 
-    var oauth2Client = new OAuth2(
-      secrets.google.clientID,
-      secrets.google.clientSecret,
-      secrets.google.callbackURL
-    );
-    oauth2Client.setCredentials({
-      access_token: token.accessToken,
-      refresh_token: token.refreshToken,
-    });
-
-    var drive = google.drive({ version: 'v2', auth: oauth2Client });
-    var uid = guid();
-    var resource = {
-      'id': guid(),
-      'type': 'web_hook',
-      'address': 'https://driveql.herokuapp.com/notification'
-    }
-    var watchReq = drive.files.watch({
-      'fileId': file.id,
-      'resource': resource
-    }, function(err, res) {console.log('watch result:', res);});
+  var oauth2Client = new OAuth2(
+    secrets.google.clientID,
+    secrets.google.clientSecret,
+    secrets.google.callbackURL
+  );
+  oauth2Client.setCredentials({
+    access_token: token.accessToken,
+    refresh_token: token.refreshToken,
+  });
 
 
-
-    User.findById(req.user.id, function(err, user) {
-      if (err) {
-        return next(err);
-      }
-      if (alreadyHave) {
-        user.apiFiles = user.apiFiles.map(f => f.id === file.id ? file : f);
-      } else {
-        user.apiFiles.push(file);
-      }
-      user.save(() => {
-        return getGoogleFiles(req, res, next)
-        // res.render('api/file', {
-        //   file,
-        // });
-      })
-    })
-    return;
+  var drive = google.drive({ version: 'v2', auth: oauth2Client });
+  var uid = guid();
+  var resource = {
+    'id': 'file:' + file.id + '__user:' + req.user.id,
+    'type': 'web_hook',
+    'address': 'https://driveql.herokuapp.com/notification'
   }
+  var watchReq = drive.files.watch({
+    'fileId': file.id,
+    'resource': resource
+  }, function(err, res) {console.log('watch result:', res);});
+
+
+  User.findById(req.user.id, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    user.apiFiles.push(file);
+
+    user.save(() => {
+      return getGoogleFiles(req, res, next)
+      // res.render('api/file', {
+      //   file,
+      // });
+    })
+  })
+  return;
 
   res.render('api/file', {
     file,
