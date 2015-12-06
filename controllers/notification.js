@@ -1,39 +1,40 @@
-var User = require('../models/User');
-var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
-var _ = require('lodash');
+const User = require('../models/User');
+const {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
+const _ = require('lodash');
+const {genSchema} = require('../libs/genSchema');
 
 /**
  * POST /notification
  * receive a notification that one of the files has been changed.
  */
 
-exports.postNotification = function(req, res, next) {
-
+exports.postNotification = function postNotification(req, res) {
   console.log('req:', req);
 
-  var uidArr = req.headers['x-goog-channel-id'].split('__user--');
-  var userId = uidArr[1];
-  var fileId = uidArr[0].replace(/^file--/, '');
+  const uidArr = req.headers['x-goog-channel-id'].split('__user--');
+  const userId = uidArr[1];
+  const fileId = uidArr[0].replace(/^file--/, '');
 
   console.log('\n\n\n\nuserID: ', userId);
   console.log('\n\n\n\nfileID: ', fileId);
 
-  var user = User.findById(userId, function(err, user) {
-    if (err) {
+  User.findById(userId, (err, user) => {
+    if (err || !user) {
       console.log(err);
+      res.status(200).send('OK');
+      return;
     }
+    const token = _.find(user.tokens, { kind: 'google' });
+    const file = user.apiFiles.find(f => f.id === fileId);
+
+    downloadGoogleSpreadsheet(token, file, () => {
+      genSchema();
+      console.log('done');
+    });
+
+    user.apiFiles = user.apiFiles.map(f => f.id === fileId ? file : f);
+    user.save();
+
+    res.status(200).send('OK');
   });
-  var token = _.find(user.tokens, { kind: 'google' });
-  var file = user.googleFiles.find(f => f.id === fileId);
-
-  downloadGoogleSpreadsheet(token, file, () => {
-    genSchema();
-    console.log('done');
-  });
-
-  user.apiFiles = user.apiFiles.map(f => f.id === fileId ? file : f);
-
-  res.status(200).send('OK');
-
-
-}
+};
