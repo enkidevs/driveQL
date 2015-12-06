@@ -127,13 +127,17 @@ function deleteCachedFile(file, user) {
   } catch (e) {
     console.log(e);
   }
+  const token = _.find(user.tokens, { kind: 'google' });
   request('https://www.googleapis.com/drive/v2/channels/stop'
   , {
     method: 'POST',
     'id': 'file--' + file.id + '__user--' + user.id,
     'resourceId': file.resourceId,
+    'auth': {
+      'bearer': token.accessToken,
+    },
   }, (err, res) => {
-    console.log('Unsubscribe: ', err, res);
+    console.log('Unsubscribe: ', err.body, res.body);
   });
 }
 
