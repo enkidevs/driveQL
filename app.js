@@ -1,54 +1,51 @@
-require("babel-register");
+require('babel-register');
 
 /**
  * Module dependencies.
  */
-var express = require('express');
-var cookieParser = require('cookie-parser');
-var compress = require('compression');
-var favicon = require('serve-favicon');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var errorHandler = require('errorhandler');
-// var lusca = require('lusca');
-var methodOverride = require('method-override');
+const express = require('express');
+const cookieParser = require('cookie-parser');
+const compress = require('compression');
+const favicon = require('serve-favicon');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const errorHandler = require('errorhandler');
+const methodOverride = require('method-override');
 
-var _ = require('lodash');
-var MongoStore = require('connect-mongo')(session);
-var flash = require('express-flash');
-var path = require('path');
-var mongoose = require('mongoose');
-var passport = require('passport');
-var expressValidator = require('express-validator');
-var sass = require('node-sass-middleware');
+const MongoStore = require('connect-mongo')(session);
+const flash = require('express-flash');
+const path = require('path');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const expressValidator = require('express-validator');
+const sass = require('node-sass-middleware');
 
 
 /**
  * Controllers (route handlers).
  */
-var homeController = require('./controllers/home');
-var userController = require('./controllers/user');
-var apiController = require('./controllers/api');
-var contactController = require('./controllers/contact');
-var notificationController = require('./controllers/notification');
+const homeController = require('./controllers/home');
+const userController = require('./controllers/user');
+const filesController = require('./controllers/files');
+const notificationController = require('./controllers/notification');
 
 /**
  * API keys and Passport configuration.
  */
-var secrets = require('./config/secrets');
-var passportConf = require('./config/passport');
+const secrets = require('./config/secrets');
+const passportConf = require('./config/passport');
 
 /**
  * Create Express server.
  */
-var app = express();
+const app = express();
 
 /**
  * Connect to MongoDB.
  */
 mongoose.connect(secrets.db);
-mongoose.connection.on('error', function() {
+mongoose.connection.on('error', () => {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
@@ -64,7 +61,7 @@ app.use(sass({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
   debug: true,
-  outputStyle: 'expanded'
+  outputStyle: 'expanded',
 }));
 app.use(logger('dev'));
 app.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
@@ -77,7 +74,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   secret: secrets.sessionSecret,
-  store: new MongoStore({ url: secrets.db, autoReconnect: true })
+  store: new MongoStore({ url: secrets.db, autoReconnect: true }),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -87,11 +84,11 @@ app.use(flash());
 //   xframe: 'SAMEORIGIN',
 //   xssProtection: true
 // }));
-app.use(function(req, res, next) {
+app.use(function locals(req, res, next) {
   res.locals.user = req.user;
   next();
 });
-app.use(function(req, res, next) {
+app.use(function returnTo(req, res, next) {
   if (/api/i.test(req.path)) {
     req.session.returnTo = req.path;
   }
@@ -104,33 +101,17 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
-app.get('/forgot', userController.getForgot);
-app.post('/forgot', userController.postForgot);
-app.get('/reset/:token', userController.getReset);
-app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
 app.post('/notification', notificationController.postNotification);
-app.get('/account', passportConf.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConf.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
 
 /**
  * API examples routes.
  */
-app.get('/api', apiController.getApi);
-app.get('/api/files', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFiles);
-app.get('/api/synced', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getSyncedFiles);
-app.get('/api/unsync/:id', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.unsyncFile);
-app.get('/api/unsyncf/:id', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.unsyncFileFromFullList);
-app.get('/api/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFile);
+app.get('/files', passportConf.isAuthenticated, passportConf.isAuthorized, filesController.getGoogleFiles);
+app.get('/synced', passportConf.isAuthenticated, passportConf.isAuthorized, filesController.getSyncedFiles);
+app.get('/unsync/:id', passportConf.isAuthenticated, passportConf.isAuthorized, filesController.unsyncFile);
+app.get('/unsyncf/:id', passportConf.isAuthenticated, passportConf.isAuthorized, filesController.unsyncFileFromFullList);
+app.get('/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, filesController.getGoogleFile);
 
 
 /**
@@ -138,22 +119,17 @@ app.get('/api/file/:file', passportConf.isAuthenticated, passportConf.isAuthoriz
  */
 
 app.get('/auth/google', passport.authenticate('google', { accessType: 'offline', scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
-  res.redirect('/api/files');
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+  res.redirect('/files');
 });
 
-var gd = require('./controllers/gd');
+const gd = require('./controllers/gd');
 app.get('/gdoc', gd.default);
-
-var graphqloldController = require('./controllers/graphql_old');
-app.get('/graphqlold', graphqloldController.index);
-
 
 const genSchema = require('./libs/genSchema').genSchema;
 genSchema();
-var graphiqlController = require('./controllers/graphql');
+const graphiqlController = require('./controllers/graphql');
 app.use('/graphql', graphiqlController);
-
 
 /**
  * Error Handler.
@@ -163,7 +139,7 @@ app.use(errorHandler());
 /**
  * Start Express server.
  */
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function listen() {
   console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
 });
 

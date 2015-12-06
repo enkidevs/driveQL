@@ -13,7 +13,7 @@ block content
           img(src='#{file.thumbnailLink}',
             onerror="this.style.visibility='hidden'")
           p.fileTitle #{file.title}
-        a.unsyncLink(href='/api/unsync/#{file.id}')
+        a.unsyncLink(href='/unsync/#{file.id}')
           | x
         a.graphqlLink(href='/graphql?query=%7B%0A%20%20#{file.cleanTitle}%20%7B%0A%09%09%0A%09%7D%0A%7D')
           img.graphql-small-icon(src='/graphql.svg')
