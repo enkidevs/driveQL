@@ -11735,6 +11735,7 @@ footer p, footer ul {
   margin-right: 6px;
 }
 
+<<<<<<< HEAD
 .fileTitle {
   height: 32px;
   margin: 5px;
@@ -11788,6 +11789,32 @@ footer p, footer ul {
   color: black;
   background: rgba(128, 128, 128, 0.6);
   text-decoration: none;
+=======
+.background-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
+}
+
+.hero {
+  width: 500px;
+  background: #4d90fc;
+  color: #FFF;
+  margin: 100px auto;
+  padding: 50px;
+  box-shadow: 0 0 30px #aaa;
+}
+
+.hero cite {
+  display: block;
+}
+
+.hero cite a {
+  color: #FFF;
+>>>>>>> playing around with the home
 }
 
 .graphqlLink {
