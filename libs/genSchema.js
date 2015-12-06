@@ -195,12 +195,19 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
   });
 }
 
+function removeFileExtention(path) {
+  const res = path.split('_').reverse().slice(1).reverse().join('_');
+  console.log('removeFileExtention',path, res)
+  return res
+}
+
 function schemaFromSpreadSheetsObj(data) {
   typenames_count = {};
   var fieldsFromData = {};
   Object.keys(data).forEach(k => {
-    fieldsFromData[k] = {
-      name: k,
+    const nk = removeFileExtention(k);
+    fieldsFromData[nk] = {
+      name: nk,
       type: schemaFromSpreadSheet(k, data[k], true),
       resolve: () => data[k],
     }

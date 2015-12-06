@@ -97,11 +97,11 @@ footer {
   top: 4px;
   font-size: 20px;
   line-height: 23px;
-  right: 18px;
-  color: red;
+  left: 21px;
+  color: black;
   background: rgba(128, 128, 128, 0.32);
   &:hover {
-    color: red;
+    color: black;
     background: rgba(128, 128, 128, 0.60);
     text-decoration: none;
   }
@@ -112,16 +112,20 @@ footer {
   text-decoration: none;
 }
 
+.graphql-small-icon {
+  width: 15px;
+}
+
 .syncLink {
   position: absolute;
   top: 4px;
   font-size: 20px;
   line-height: 21px;
   right: 18px;
-  color: green;
+  color: black;
   background: rgba(128, 128, 128, 0.32);
   &:hover {
-    color: green;
+    color: black;
     background: rgba(128, 128, 128, 0.60);
     text-decoration: none;
   }
@@ -130,5 +134,65 @@ footer {
   height: 25px;
   text-align: center;
   text-decoration: none;
+}
 
+.graphqlLink {
+  position: absolute;
+  top: 4px;
+  font-size: 20px;
+  line-height: 21px;
+  right: 18px;
+  color: black;
+  border: 3px solid transparent;
+  &:hover {
+    color: black;
+    border: 3px solid purple;
+    text-decoration: none;
+  }
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.background-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
+}
+
+.hero {
+  width: 500px;
+  background: $brand-primary;
+  color: #FFF;
+  margin: 80px;
+  margin-left: calc(100% - 500px);
+  margin-right: 0;
+  padding: 50px;
+  box-shadow: 0 0 30px #aaa;
+  cite {
+    display: block;
+    a {
+      color: #FFF;
+    }
+  }
+  img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    opacity: 0.3;
+
+  }
+}
+
+.explainations {
+  position: absolute;
+  background: #FFF;
+  padding: 50px;
+  box-shadow: 0 0 30px #aaa;
+  top: 200px;
 }

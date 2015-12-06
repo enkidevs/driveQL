@@ -41,7 +41,6 @@ passport.deserializeUser(function(id, done) {
    if (req.user) {
      User.findOne({ google: profile.id }, function(err, existingUser) {
        if (existingUser) {
-         console.log(refreshToken)
          existingUser.tokens = existingUser.tokens.map(t => {
            if (t.kind === 'google') {
              return { kind: 'google', accessToken, refreshToken }
