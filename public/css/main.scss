@@ -172,7 +172,11 @@ footer {
   margin-right: 0;
   padding: 50px;
   box-shadow: 0 0 30px #aaa;
+  blockquote {
+    font-size: 30px;
+  }
   cite {
+    font-size: 16px;
     display: block;
     a {
       color: #FFF;
