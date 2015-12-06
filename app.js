@@ -120,7 +120,7 @@ app.get('/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, 
 
 app.get('/auth/google', passport.authenticate('google', { accessType: 'offline', scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive' }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/api/files');
+  res.redirect('/files');
 });
 
 const gd = require('./controllers/gd');

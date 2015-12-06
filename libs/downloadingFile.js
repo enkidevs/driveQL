@@ -1,21 +1,19 @@
-var request = require('request');
-var fs = require('fs');
+const request = require('request');
+const fs = require('fs');
 
 module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => {
-  var cleanTitle = fileToDownload.title
+  const cleanTitle = fileToDownload.title
     .replace(/ /g, '_')
     .replace(/\./g, '_');
-  var file = fs.createWriteStream(
+  const file = fs.createWriteStream(
     '.cached_files/' + cleanTitle + '.xlsx'
   );
-  request(fileToDownload.exportLinks['officedocument']
+  request(fileToDownload.exportLinks.officedocument
   , {
     'auth': {
-      'bearer': token.accessToken
-    }
+      'bearer': token.accessToken,
+    },
   }).pipe(file);
 
-  file.on('finish', function(){
-    callback();
-  });
-}
+  file.on('finish', callback);
+};

@@ -14,10 +14,10 @@ block content
             onerror="this.style.visibility='hidden'")
           p.fileTitle #{file.title}
         if file.synced
-          a.unsyncLink(href='/api/unsyncf/#{file.id}')
+          a.unsyncLink(href='/unsyncf/#{file.id}')
             | x
           a.graphqlLink(href='/graphql?query=%7B%0A%20%20#{file.cleanTitle}%20%7B%0A%09%09%0A%09%7D%0A%7D')
             img.graphql-small-icon(src='/graphql.svg')
         else
-          a.syncLink(href='/api/file/#{file.id}')
+          a.syncLink(href='/file/#{file.id}')
             | +
