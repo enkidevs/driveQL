@@ -19,7 +19,7 @@ exports.postNotification = function(req, res, next) {
     }
   });
   var token = _.find(user.tokens, { kind: 'google' });
-  var file = req.user.googleFiles.find(f => f.id === fileId);
+  var file = user.googleFiles.find(f => f.id === fileId);
 
   downloadGoogleSpreadsheet(token, file, () => {
     genSchema();
