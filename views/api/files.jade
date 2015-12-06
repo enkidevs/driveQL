@@ -11,5 +11,9 @@ block content
           img(src='#{file.thumbnailLink}',
             onerror="this.style.visibility='hidden'")
           p.fileTitle #{file.title}
-        a.syncLink(href='/api/addsync/#{file.id}')
-          | +
+        if file.synced
+          a.unsyncLink(href='/api/unsyncf/#{file.id}')
+            | ✗
+        else
+          a.syncLink(href='/api/file/#{file.id}')
+            | +

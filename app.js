@@ -127,7 +127,9 @@ app.get('/api', apiController.getApi);
 app.get('/api/files', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFiles);
 app.get('/api/synced', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getSyncedFiles);
 app.get('/api/unsync/:id', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.unsyncFile);
+app.get('/api/unsyncf/:id', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.unsyncFileFromFullList);
 app.get('/api/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, apiController.getGoogleFile);
+
 
 /**
  * OAuth authentication routes. (Sign in)
