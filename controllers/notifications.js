@@ -5,4 +5,5 @@
 exports.postNotification = function(req, res) {
   console.log('req:', req);
   console.log('res:', res);
+  es.status(200).send('OK');
 }

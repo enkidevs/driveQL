@@ -13,8 +13,8 @@ module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => 
       'bearer': token.accessToken
     }
   }).pipe(file);
-  var uid = guid();
-  
+
+  var uid = guid();  
   var resource = {
     'id': guid(),
     'type': 'web_hook',
