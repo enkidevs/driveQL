@@ -11715,6 +11715,18 @@ footer p, footer ul {
   margin: -15px 15px -15px;
 }
 
+.navbar-header {
+  margin-top: 5px;
+}
+
+.navbar-nav {
+  margin-top: 5px;
+}
+
+.btn-google {
+  margin-top: 10px;
+}
+
 .alert {
   margin-top: 20px;
 }

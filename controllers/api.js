@@ -11,7 +11,6 @@ var secrets = require('../config/secrets');
 var google = require('googleapis');
 var fs = require('fs');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
-var {guid} = require('../libs/guid');
 import {genSchema} from '../libs/genSchema';
 
 /**
@@ -88,16 +87,7 @@ function getGoogleFiles(req, res, next) {
               officedocument: f.exportLinks['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
             }
           }
-          // var uid = guid();
-          // var resource = {
-          //   'id': guid(),
-          //   'type': 'web_hook',
-          //   'address': 'https://driveql.herokuapp.com'
-          // }
-          // var watchReq = drive.files.watch({
-          //   'fileId': f.id,
-          //   'resource': resource
-          // }, function(err, res) {console.log('watch result:', res);});
+
 
           return f;
         });
