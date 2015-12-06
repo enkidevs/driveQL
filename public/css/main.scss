@@ -85,11 +85,11 @@ footer {
   top: 4px;
   font-size: 20px;
   line-height: 23px;
-  right: 18px;
-  color: red;
+  left: 21px;
+  color: black;
   background: rgba(128, 128, 128, 0.32);
   &:hover {
-    color: red;
+    color: black;
     background: rgba(128, 128, 128, 0.60);
     text-decoration: none;
   }
@@ -100,17 +100,42 @@ footer {
   text-decoration: none;
 }
 
+.graphql-small-icon {
+  width: 15px;
+}
+
 .syncLink {
   position: absolute;
   top: 4px;
   font-size: 20px;
   line-height: 21px;
   right: 18px;
-  color: green;
+  color: black;
   background: rgba(128, 128, 128, 0.32);
   &:hover {
-    color: green;
+    color: black;
     background: rgba(128, 128, 128, 0.60);
+    text-decoration: none;
+  }
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+
+.graphqlLink {
+  position: absolute;
+  top: 4px;
+  font-size: 20px;
+  line-height: 21px;
+  right: 18px;
+  color: black;
+  border: 3px solid transparent;
+  &:hover {
+    color: black;
+    border: 3px solid purple;
     text-decoration: none;
   }
   border-radius: 50%;

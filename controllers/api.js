@@ -129,16 +129,25 @@ exports.getSyncedFiles = function(req, res, next) {
       return next(err);
     }
     return res.render('api/synced',
-      {apiFiles : user.apiFiles}
+      {apiFiles : user.apiFiles.map(f => {
+        f.cleanTitle =
+          f.title.replace(/ /g, '_')
+                 .replace(/\./g, '_')
+        return f;
+      })}
     )
   });
 };
 
 function deleteCachedFile(file) {
   var cleanTitle = file.title.replace(/ /g, '_');
-  fs.unlinkSync(
-    '.cached_files/' + cleanTitle + '.xlsx'
-  );
+  try {
+    fs.unlinkSync(
+      '.cached_files/' + cleanTitle + '.xlsx'
+    );
+  } catch(e) {
+    console.log(e)
+  }
   // TODO: STOP WATCHING FOR CHANGES TO THIS FILE
 }
 
