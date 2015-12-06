@@ -118,7 +118,7 @@ exports.getSyncedFiles = function getSyncedFiles(req, res, next) {
   });
 };
 
-function deleteCachedFile(file) {
+function deleteCachedFile(file, user) {
   const cleanTitle = file.title.replace(/ /g, '_').replace(/\//g, '_').replace(/\./g, '_');
   try {
     fs.unlinkSync(
@@ -127,7 +127,14 @@ function deleteCachedFile(file) {
   } catch (e) {
     console.log(e);
   }
-  // TODO: STOP WATCHING FOR CHANGES TO THIS FILE
+  request('https://www.googleapis.com/drive/v2/channels/stop'
+  , {
+    method: 'POST',
+    'id': 'file--' + file.id + '__user--' + user.id,
+    'resourceId': file.resourceId,
+  }, (err, res) => {
+    console.log('Unsubscribe: ', err, res);
+  });
 }
 
 exports.unsyncFile = function unsyncFile(req, res, next) {
@@ -138,7 +145,7 @@ exports.unsyncFile = function unsyncFile(req, res, next) {
     user.apiFiles = user.apiFiles.filter(
       f => {
         if (f.id === req.params.id) {
-          deleteCachedFile(f);
+          deleteCachedFile(f, user);
           return false;
         }
         return true;
@@ -157,25 +164,15 @@ exports.unsyncFileFromFullList = function unsyncFileFromFullList(req, res, next)
     if (err) {
       return next(err);
     }
-    let fileToDelete;
     user.apiFiles = user.apiFiles.filter(
       f => {
         if (f.id === req.params.id) {
           deleteCachedFile(f);
-          fileToDelete = f;
           return false;
         }
         return true;
       }
     );
-
-    request('https://www.googleapis.com/drive/v2/channels/stop'
-    , {
-      method: 'POST',
-      'id': 'file--' + fileToDelete.id + '__user--' + req.user.id,
-      'resourceId': fileToDelete.resourceId,
-    });
-
 
     user.save(() => {
       return getGoogleFiles(req, res, next);

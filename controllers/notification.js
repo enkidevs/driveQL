@@ -9,8 +9,7 @@ const {genSchema} = require('../libs/genSchema');
  */
 
 exports.postNotification = (req, res) => {
-  console.log('req:', req);
-
+  console.log('\n\n\n\n******** RECEIVING NOTIFICATION *********');
   const uidArr = req.headers['x-goog-channel-id'].split('__user--');
   const resourceId = req.headers['x-goog-resource-id'];
   const userId = uidArr[1];
@@ -25,6 +24,7 @@ exports.postNotification = (req, res) => {
       res.status(200).send('OK');
       return;
     }
+
     const token = _.find(user.tokens, { kind: 'google' });
     const file = user.apiFiles.find(f => f.id === fileId);
     if (file) {
