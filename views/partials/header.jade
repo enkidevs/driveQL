@@ -11,8 +11,6 @@
         | DriveQL
     .collapse.navbar-collapse
       ul.nav.navbar-nav
-        li(class=title=='Home'?'active':undefined)
-          a(href='/') Home
         if user
           li(class=title=='Files'?'active':undefined)
             a(href='/api/files') Files

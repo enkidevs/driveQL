@@ -16,6 +16,8 @@ block content
     hr
     .row
     if !user
-      | Login to see your files
+      a.btn.btn-block.btn-google.btn-social(href='/auth/google')
+        i.fa.fa-google-plus
+        | Sign in with Google
     else
       a.button(href='/api/files') Go to your files

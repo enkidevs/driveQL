@@ -11866,3 +11866,7 @@ footer p, footer ul {
   box-shadow: 0 0 30px #aaa;
   top: 200px;
 }
+
+h3 + .row {
+  margin-top: 50px;
+}
