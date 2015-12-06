@@ -11726,6 +11726,7 @@ footer p, footer ul {
 }
 
 .thumbnail img {
+  margin-top: 20px;
   width: 150px;
   min-height: 213px;
 }

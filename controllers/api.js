@@ -9,6 +9,7 @@ var refresh = require('passport-oauth2-refresh');
 
 var secrets = require('../config/secrets');
 var google = require('googleapis');
+var fs = require('fs');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
 import {genSchema} from '../libs/genSchema';
 
@@ -25,7 +26,7 @@ exports.getApi = function(req, res) {
 /**
  * GET /api/files
  */
-exports.getGoogleFiles = function(req, res, next) {
+function getGoogleFiles(req, res, next) {
   var token = _.find(req.user.tokens, { kind: 'google' });
   var retries = 2;
   var OAuth2 = google.auth.OAuth2;
@@ -95,7 +96,12 @@ exports.getGoogleFiles = function(req, res, next) {
             return next(err);
           }
           res.render('api/files', {
-            files: result.items
+            files: result.items.map(file => {
+              if (user.apiFiles.find(f => f.id === file.id)) {
+                file.synced = true
+              }
+              return file
+            })
           });
         });
       });
@@ -103,6 +109,9 @@ exports.getGoogleFiles = function(req, res, next) {
   }
   makeRequest();
 };
+
+exports.getGoogleFiles = getGoogleFiles;
+
 
 exports.getSyncedFiles = function(req, res, next) {
   User.findById(req.user.id, function(err, user) {
@@ -115,18 +124,53 @@ exports.getSyncedFiles = function(req, res, next) {
   });
 };
 
+function deleteCachedFile(file) {
+  var cleanTitle = file.title.replace(/ /g, '_');
+  fs.unlinkSync(
+    '.cached_files/' + cleanTitle + '.xlsx'
+  );
+  // TODO: STOP WATCHING FOR CHANGES TO THIS FILE
+}
+
 exports.unsyncFile = function(req, res, next) {
   User.findById(req.user.id, function(err, user) {
     if (err) {
       return next(err);
     }
     user.apiFiles = user.apiFiles.filter(
-      f => f.id != req.params.id
+      f => {
+        if (f.id === req.params.id) {
+          deleteCachedFile(f);
+          return false
+        }
+        return true
+      }
     )
     user.save();
     return res.render('api/synced',
       {apiFiles : user.apiFiles}
     )
+  });
+};
+
+
+exports.unsyncFileFromFullList = function(req, res, next) {
+  User.findById(req.user.id, function(err, user) {
+    if (err) {
+      return next(err);
+    }
+    user.apiFiles = user.apiFiles.filter(
+      f => {
+        if (f.id === req.params.id) {
+          deleteCachedFile(f);
+          return false
+        }
+        return true
+      }
+    )
+    user.save(() => {
+      return getGoogleFiles(req, res, next);
+    });
   });
 };
 
@@ -156,9 +200,10 @@ exports.getGoogleFile = function(req, res, next) {
         user.apiFiles.push(file);
       }
       user.save(() => {
-        res.render('api/file', {
-          file,
-        });
+        return getGoogleFiles(req, res, next)
+        // res.render('api/file', {
+        //   file,
+        // });
       })
     })
     return;
