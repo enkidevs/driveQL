@@ -11844,7 +11844,12 @@ footer p, footer ul {
   box-shadow: 0 0 30px #aaa;
 }
 
+.hero blockquote {
+  font-size: 30px;
+}
+
 .hero cite {
+  font-size: 16px;
   display: block;
 }
 
