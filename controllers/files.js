@@ -86,7 +86,8 @@ function getGoogleFiles(req, res, next) {
               }
               file.cleanTitle =
                 file.title.replace(/ /g, '_')
-                       .replace(/\./g, '_');
+                       .replace(/\./g, '_')
+                       .replace(/\//g, '_');
               return file;
             }),
           });
@@ -109,7 +110,8 @@ exports.getSyncedFiles = function getSyncedFiles(req, res, next) {
       {apiFiles: user.apiFiles.map(f => {
         f.cleanTitle =
           f.title.replace(/ /g, '_')
-                 .replace(/\./g, '_');
+                 .replace(/\./g, '_')
+                 .replace(/\//g, '_');
         return f;
       })}
     );
@@ -117,7 +119,7 @@ exports.getSyncedFiles = function getSyncedFiles(req, res, next) {
 };
 
 function deleteCachedFile(file) {
-  const cleanTitle = file.title.replace(/ /g, '_');
+  const cleanTitle = file.title.replace(/ /g, '_').replace(/\//g, '_').replace(/\./g, '_');
   try {
     fs.unlinkSync(
       '.cached_files/' + cleanTitle + '.xlsx'
