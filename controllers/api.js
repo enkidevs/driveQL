@@ -10,6 +10,7 @@ var refresh = require('passport-oauth2-refresh');
 var secrets = require('../config/secrets');
 var google = require('googleapis');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
+var {guid} = require('../libs/guid');
 import {genSchema} from '../libs/genSchema';
 
 /**
@@ -86,7 +87,16 @@ exports.getGoogleFiles = function(req, res, next) {
               officedocument: f.exportLinks['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
             }
           }
-          var watchReq = drive.files.watch({'fileId': f.id}, function(channel) {console.log('watch result:', channel);});
+          // var uid = guid();
+          // var resource = {
+          //   'id': guid(),
+          //   'type': 'web_hook',
+          //   'address': 'https://driveql.herokuapp.com'
+          // }
+          // var watchReq = drive.files.watch({
+          //   'fileId': f.id,
+          //   'resource': resource
+          // }, function(err, res) {console.log('watch result:', res);});
 
           return f;
         });
