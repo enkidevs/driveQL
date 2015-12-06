@@ -167,6 +167,7 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
             return r[k] == a[k];
           });
         }
+        return obj[sheetName][0];
       },
     };
     fieldsFromData[normalizedName + 's'] = {
