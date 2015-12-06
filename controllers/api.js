@@ -216,7 +216,7 @@ exports.getGoogleFile = function(req, res, next) {
 
   var drive = google.drive({ version: 'v2', auth: oauth2Client });
   var resource = {
-    'id': 'file:' + file.id + '__user:' + req.user.id,
+    'id': 'file--' + file.id + '__user--' + req.user.id,
     'type': 'web_hook',
     'address': 'https://driveql.herokuapp.com/notification'
   }

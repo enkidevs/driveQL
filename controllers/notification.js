@@ -9,9 +9,9 @@ var _ = require('lodash');
 exports.postNotification = function(req, res, next) {
   console.log('req:', req);
 
-  var uidArr = req.headers['x-goog-channel-id'].split('__user:');
+  var uidArr = req.headers['x-goog-channel-id'].split('__user--');
   var userId = uidArr[1];
-  var fileId = uidArr[0].replace(/^file:/, '');
+  var fileId = uidArr[0].replace(/^file--/, '');
 
   console.log('\n\n\n\nuserID: ', userId);
   console.log('\n\n\n\nfileID: ', fileId);
