@@ -11758,12 +11758,13 @@ footer p, footer ul {
 
 .unsyncLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 23px;
-  left: 21px;
-  color: black;
-  background: rgba(128, 128, 128, 0.32);
+  left: 10px;
+  color: #FFF;
+  background: #de4b33;
+  transition: transform 0.2s ease-in-out;
   border-radius: 50%;
   width: 25px;
   height: 25px;
@@ -11772,23 +11773,24 @@ footer p, footer ul {
 }
 
 .unsyncLink:hover {
-  color: black;
-  background: rgba(128, 128, 128, 0.6);
+  color: #FFF;
+  transform: scale(2);
   text-decoration: none;
 }
 
 .graphql-small-icon {
-  width: 15px;
+  width: 18px;
 }
 
 .syncLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 21px;
-  right: 18px;
-  color: black;
-  background: rgba(128, 128, 128, 0.32);
+  right: 10px;
+  color: #FFF;
+  background: #60bf60;
+  transition: transform 0.2s ease-in-out;
   border-radius: 50%;
   width: 25px;
   height: 25px;
@@ -11797,19 +11799,19 @@ footer p, footer ul {
 }
 
 .syncLink:hover {
-  color: black;
-  background: rgba(128, 128, 128, 0.6);
+  color: #FFF;
   text-decoration: none;
+  transform: scale(2);
 }
 
 .graphqlLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 21px;
-  right: 18px;
-  color: black;
-  border: 3px solid transparent;
+  right: 10px;
+  background: #4d90fc;
+  transition: transform 0.2s ease-in-out;
   border-radius: 50%;
   width: 25px;
   height: 25px;
@@ -11818,9 +11820,8 @@ footer p, footer ul {
 }
 
 .graphqlLink:hover {
-  color: black;
-  border: 3px solid purple;
   text-decoration: none;
+  transform: scale(2);
 }
 
 .background-hero {
@@ -11864,4 +11865,8 @@ footer p, footer ul {
   padding: 50px;
   box-shadow: 0 0 30px #aaa;
   top: 200px;
+}
+
+h3 + .row {
+  margin-top: 50px;
 }

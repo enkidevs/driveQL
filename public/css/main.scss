@@ -85,24 +85,22 @@ footer {
   margin: 5px;
   line-height: 14px;
   font-size: 14px;
-  // background: #ff6f31;
-  // color: white;
-  // margin: 0;
   text-align: center;
   overflow: hidden;
 }
 
 .unsyncLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 23px;
-  left: 21px;
-  color: black;
-  background: rgba(128, 128, 128, 0.32);
+  left: 10px;
+  color: #FFF;
+  background: $brand-danger;
+  transition: transform 0.2s ease-in-out;
   &:hover {
-    color: black;
-    background: rgba(128, 128, 128, 0.60);
+    color: #FFF;
+    transform: scale(2);
     text-decoration: none;
   }
   border-radius: 50%;
@@ -113,21 +111,22 @@ footer {
 }
 
 .graphql-small-icon {
-  width: 15px;
+  width: 18px;
 }
 
 .syncLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 21px;
-  right: 18px;
-  color: black;
-  background: rgba(128, 128, 128, 0.32);
+  right: 10px;
+  color: #FFF;
+  background: $brand-success;
+  transition: transform 0.2s ease-in-out;
   &:hover {
-    color: black;
-    background: rgba(128, 128, 128, 0.60);
+    color: #FFF;
     text-decoration: none;
+    transform: scale(2);
   }
   border-radius: 50%;
   width: 25px;
@@ -138,16 +137,15 @@ footer {
 
 .graphqlLink {
   position: absolute;
-  top: 4px;
+  top: -4px;
   font-size: 20px;
   line-height: 21px;
-  right: 18px;
-  color: black;
-  border: 3px solid transparent;
+  right: 10px;
+  background: $brand-primary;
+  transition: transform 0.2s ease-in-out;
   &:hover {
-    color: black;
-    border: 3px solid purple;
     text-decoration: none;
+    transform: scale(2);
   }
   border-radius: 50%;
   width: 25px;
@@ -195,4 +193,8 @@ footer {
   padding: 50px;
   box-shadow: 0 0 30px #aaa;
   top: 200px;
+}
+
+h3 + .row {
+  margin-top: 50px;
 }

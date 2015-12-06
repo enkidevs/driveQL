@@ -2,8 +2,8 @@ extends ../layout
 
 block content
   h3
-    i.fa.fa-group
-    |  My Files
+    i.fa.fa-file-excel-o
+    |  Google Drive Files
   .row
     for file in files
       .col-xs-3.col-md-2
@@ -15,9 +15,9 @@ block content
           p.fileTitle #{file.title}
         if file.synced
           a.unsyncLink(href='/api/unsyncf/#{file.id}')
-            | ✗
+            | x
           a.graphqlLink(href='/graphql?query=%7B%0A%20%20#{file.cleanTitle}%20%7B%0A%09%09%0A%09%7D%0A%7D')
-            img.graphql-small-icon(src='https://cdn1.lockerdome.com/uploads/ac18f3912e2e82859174d4748953e159a63efec2ef6318c828e43b0c785b8b5e_thumb_medium')
+            img.graphql-small-icon(src='/graphql.svg')
         else
           a.syncLink(href='/api/file/#{file.id}')
             | +
