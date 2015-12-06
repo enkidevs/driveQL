@@ -41,7 +41,7 @@ function describeExampleVals(stringVals) {
 let typenamesCount = {};
 
 function sanitize(name) {
-  let clean = name.replace(/\./g, '_').replace(/\//g, '_');
+  let clean = name.replace(/[^_a-zA-Z0-9]/g, '_');
   if (typenamesCount[clean]) {
     typenamesCount[clean] = typenamesCount[clean] + 1;
     clean = clean + '_' + (typenamesCount[clean] - 1);
@@ -96,40 +96,39 @@ function getBasicTypeFromData(field, data) {
   };
 }
 
-function schemaFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
+function typeFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
+  const firstRow = data[0];
+  const fieldsFromData = {};
+  // inferring types (Int or String) from first row
+  Object.keys(firstRow).forEach(fieldName => {
+    let {type, description} = getBasicTypeFromData(fieldName, data);
+    let relation = false;
+    let normalizedName = sanitize(fieldName);
+    const sheetName = fieldName.slice(0, -2);
+    if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
+      normalizedName = sheetName;
+      type = sheetSchemas[sheetName];
+      description = '[more fields]';
+      relation = true;
+    } else if (fieldName === 'id') {
+      description = describeExampleVals(data.map(x => x[fieldName]));
+      type = GraphQLID;
+    }
+    fieldsFromData[normalizedName] = {
+      name: normalizedName,
+      type,
+      description,
+      resolve: (row) => {
+        if (relation) {
+          return getRowFromSheetById(sheetName, row[fieldName]);
+        }
+        return row[fieldName];
+      },
+    };
+  });
   return new GraphQLObjectType({
     name: sanitize(name),
-    fields: () => {
-      const firstRow = data[0];
-      const fieldsFromData = {};
-      // inferring types (Int or String) from first row
-      Object.keys(firstRow).forEach(fieldName => {
-        let {type, description} = getBasicTypeFromData(fieldName, data);
-        let relation = false;
-        let normalizedName = fieldName;
-        const sheetName = fieldName.slice(0, -2);
-        if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
-          normalizedName = sheetName;
-          type = sheetSchemas[sheetName];
-          description = '[more fields]';
-          relation = true;
-        } else if (fieldName === 'id') {
-          description = describeExampleVals(data.map(x => x[fieldName]));
-          type = GraphQLID;
-        }
-        fieldsFromData[normalizedName] = {
-          type,
-          description,
-          resolve: (row) => {
-            if (relation) {
-              return getRowFromSheetById(sheetName, row[fieldName]);
-            }
-            return row[fieldName];
-          },
-        };
-      });
-      return fieldsFromData;
-    },
+    fields: () => fieldsFromData,
   });
 }
 
@@ -137,8 +136,8 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
   const sheetSchemas = {};
   const fieldsFromData = {};
   Object.keys(obj).reverse().forEach(sheetName => {
-    const normalizedName = sheetName.replace(/s$/, '');
-    sheetSchemas[normalizedName] = schemaFromArrayOfObjects(normalizedName, obj[sheetName], sheetSchemas,
+    const normalizedName = sanitize(sheetName.replace(/s$/, ''));
+    sheetSchemas[normalizedName] = typeFromArrayOfObjects(normalizedName, obj[sheetName], sheetSchemas,
       (sheet, id) => obj[(sheet + 's').replace(/ss$/, 's')].find(r => r.id === id));
     const args = {
       row: {
@@ -154,8 +153,9 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
       };
     });
     fieldsFromData[normalizedName] = {
+      name: normalizedName,
       type: sheetSchemas[normalizedName],
-      description: sheetName + ' sheet',
+      description: 'Sheet ' + sheetName,
       args,
       resolve: (root, a) => {
         if (typeof(a.row) !== 'undefined') {
@@ -172,7 +172,7 @@ function schemaFromSpreadSheet(name, obj, returnTheTypeOnly) {
     };
     fieldsFromData[normalizedName + 's'] = {
       type: new GraphQLList(sheetSchemas[normalizedName]),
-      description: '',
+      description: 'Sheet (list) ' + sheetName,
       args: {
         limit: {type: GraphQLInt},
         offset: {type: GraphQLInt},
@@ -251,12 +251,31 @@ function schemaFromSpreadSheetsObj(data) {
       },
     };
   }
-  return new GraphQLSchema({
-    query: new GraphQLObjectType({
-      name: 'root',
-      fields: () => fieldsFromData,
-    }),
-  });
+  try {
+    return new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'root',
+        fields: () => fieldsFromData,
+      }),
+    });
+  } catch (e) {
+    console.log(e);
+    return new GraphQLSchema({
+      query: new GraphQLObjectType({
+        name: 'root',
+        fields: () => {
+          return {
+            'BrokenData': {
+              name: 'BrokenData',
+              description: 'Broken data',
+              type: GraphQLString,
+              resolve: () => 'broken data',
+            },
+          };
+        },
+      }),
+    });
+  }
 }
 
 function genSchema() {
