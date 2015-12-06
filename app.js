@@ -120,7 +120,7 @@ app.get('/file/:file', passportConf.isAuthenticated, passportConf.isAuthorized, 
  * OAuth authentication routes. (Sign in)
  */
 
-app.get('/auth/google', passport.authenticate('google', { accessType: 'offline', scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive' }));
+app.get('/auth/google', passport.authenticate('google', { accessType: 'offline', scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/drive', approvalPrompt: 'force' }));
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
   res.redirect('/files');
 });
