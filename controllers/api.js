@@ -10,6 +10,7 @@ var refresh = require('passport-oauth2-refresh');
 var secrets = require('../config/secrets');
 var google = require('googleapis');
 var fs = require('fs');
+var {guid} = require('../libs/guid');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
 import {genSchema} from '../libs/genSchema';
 
@@ -182,6 +183,7 @@ exports.getGoogleFile = function(req, res, next) {
   var fileId = req.params.file;
   var file = req.user.googleFiles.find(f => f.id === fileId);
   if (!file) { return next(new Error('no file with this id')); }
+  var OAuth2 = google.auth.OAuth2;
   var token = _.find(req.user.tokens, { kind: 'google' });
 
   var alreadyHave = req.user.apiFiles.find(f => f.id === file.id);
@@ -190,6 +192,31 @@ exports.getGoogleFile = function(req, res, next) {
       genSchema();
       console.log('done')
     });
+
+    var oauth2Client = new OAuth2(
+      secrets.google.clientID,
+      secrets.google.clientSecret,
+      secrets.google.callbackURL
+    );
+    oauth2Client.setCredentials({
+      access_token: token.accessToken,
+      refresh_token: token.refreshToken,
+    });
+
+    var drive = google.drive({ version: 'v2', auth: oauth2Client });
+    var uid = guid();
+    var resource = {
+      'id': guid(),
+      'type': 'web_hook',
+      'address': 'https://driveql.herokuapp.com/notifications'
+    }
+    var watchReq = drive.files.watch({
+      'fileId': file.id,
+      'resource': resource
+    }, function(err, res) {console.log('watch result:', res);});
+
+
+
     User.findById(req.user.id, function(err, user) {
       if (err) {
         return next(err);
@@ -208,11 +235,6 @@ exports.getGoogleFile = function(req, res, next) {
     })
     return;
   }
-
-var watchReq = google.drive.files.watch({
-  'fileId': file.id,
-})
-var watchResp = request.exec()
 
   res.render('api/file', {
     file,

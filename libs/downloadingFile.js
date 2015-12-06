@@ -1,5 +1,4 @@
 var request = require('request');
-var {guid} = require('../libs/guid');
 var fs = require('fs');
 
 module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => {
@@ -13,17 +12,6 @@ module.exports.downloadGoogleSpreadsheet = (token, fileToDownload, callback) => 
       'bearer': token.accessToken
     }
   }).pipe(file);
-
-  var uid = guid();  
-  var resource = {
-    'id': guid(),
-    'type': 'web_hook',
-    'address': 'https://driveql.herokuapp.com/notifications'
-  }
-  var watchReq = drive.files.watch({
-    'fileId': fileToDownload.id,
-    'resource': resource
-  }, function(err, res) {console.log('watch result:', res);});
 
   file.on('finish', function(){
     callback();
