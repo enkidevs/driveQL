@@ -167,7 +167,7 @@ exports.unsyncFileFromFullList = function unsyncFileFromFullList(req, res, next)
     user.apiFiles = user.apiFiles.filter(
       f => {
         if (f.id === req.params.id) {
-          deleteCachedFile(f);
+          deleteCachedFile(f, user);
           return false;
         }
         return true;
