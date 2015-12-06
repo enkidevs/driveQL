@@ -125,9 +125,6 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
   res.redirect('/files');
 });
 
-const gd = require('./controllers/gd');
-app.get('/gdoc', gd.default);
-
 const genSchema = require('./libs/genSchema').genSchema;
 genSchema();
 const graphiqlController = require('./controllers/graphql');

@@ -97,38 +97,40 @@ function getBasicTypeFromData(field, data) {
 }
 
 function typeFromArrayOfObjects(name, data, sheetSchemas, getRowFromSheetById) {
-  const firstRow = data[0];
-  const fieldsFromData = {};
-  // inferring types (Int or String) from first row
-  Object.keys(firstRow).forEach(fieldName => {
-    let {type, description} = getBasicTypeFromData(fieldName, data);
-    let relation = false;
-    let normalizedName = sanitize(fieldName);
-    const sheetName = fieldName.slice(0, -2);
-    if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
-      normalizedName = sheetName;
-      type = sheetSchemas[sheetName];
-      description = '[more fields]';
-      relation = true;
-    } else if (fieldName === 'id') {
-      description = describeExampleVals(data.map(x => x[fieldName]));
-      type = GraphQLID;
-    }
-    fieldsFromData[normalizedName] = {
-      name: normalizedName,
-      type,
-      description,
-      resolve: (row) => {
-        if (relation) {
-          return getRowFromSheetById(sheetName, row[fieldName]);
-        }
-        return row[fieldName];
-      },
-    };
-  });
   return new GraphQLObjectType({
     name: sanitize(name),
-    fields: () => fieldsFromData,
+    fields: () => {
+      const firstRow = data[0];
+      const fieldsFromData = {};
+      // inferring types (Int or String) from first row
+      Object.keys(firstRow).forEach(fieldName => {
+        let {type, description} = getBasicTypeFromData(fieldName, data);
+        let relation = false;
+        let normalizedName = fieldName;
+        const sheetName = fieldName.slice(0, -2);
+        if (fieldName.slice(fieldName.length - 2, fieldName.length) === 'Id') {
+          normalizedName = sheetName;
+          type = sheetSchemas[sheetName];
+          description = '[more fields]';
+          relation = true;
+        } else if (fieldName === 'id') {
+          description = describeExampleVals(data.map(x => x[fieldName]));
+          type = GraphQLID;
+        }
+        fieldsFromData[normalizedName] = {
+          name: normalizedName,
+          type,
+          description,
+          resolve: (row) => {
+            if (relation) {
+              return getRowFromSheetById(sheetName, row[fieldName]);
+            }
+            return row[fieldName];
+          },
+        };
+      });
+      return fieldsFromData;
+    },
   });
 }
 
