@@ -14,12 +14,11 @@ function renderGraphiQL({query, variables, version = GRAPHIQL_VERSION} = {}) {
         <script src="//cdn.jsdelivr.net/graphiql/${version}/graphiql.min.js"></script>
         <style>
         .CodeMirror-hint-information .content {
-            -webkit-line-clamp: none;
+            -webkit-line-clamp: inherit;
             max-height: inherit;
-            white-space: pre;
         }
         .CodeMirror-hint-information .content p {
-          -webkit-line-clamp: none;
+          -webkit-line-clamp: inherit;
           max-height: inherit;
           white-space: pre;
         }
