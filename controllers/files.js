@@ -80,6 +80,7 @@ function getGoogleFiles(req, res, next) {
             return next(err3);
           }
           res.render('files/files', {
+            title: 'Files',
             files: result.items.map(file => {
               if (user.apiFiles.find(f => f.id === file.id)) {
                 file.synced = true;
@@ -106,8 +107,9 @@ exports.getSyncedFiles = function getSyncedFiles(req, res, next) {
     if (err) {
       return next(err);
     }
-    return res.render('files/synced',
-      {apiFiles: user.apiFiles.map(f => {
+    return res.render('files/synced', {
+      title: 'Synced',
+      apiFiles: user.apiFiles.map(f => {
         f.cleanTitle =
           f.title.replace(/ /g, '_')
                  .replace(/\./g, '_')
