@@ -1,5 +1,6 @@
 var User = require('../models/User');
 var {downloadGoogleSpreadsheet} = require('../libs/downloadingFile');
+var _ = require('lodash');
 
 /**
  * POST /notification
@@ -24,7 +25,7 @@ exports.postNotification = function(req, res, next) {
     genSchema();
     console.log('done')
   });
-  
+
   user.apiFiles = user.apiFiles.map(f => f.id === fileId ? file : f);
 
   res.status(200).send('OK');
