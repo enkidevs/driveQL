@@ -2,8 +2,8 @@
  * POST /notifications
  * receive a notification that one of the files has been changed.
  */
-exports.postNotification = function(req, res) {
+exports.postNotification = function postNotification(req, res) {
   console.log('req:', req);
   console.log('res:', res);
   res.status(200).send('OK');
-}
+};

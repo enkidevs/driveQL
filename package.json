@@ -76,8 +76,12 @@
   },
   "devDependencies": {
     "babel-cli": "^6.3.13",
+    "babel-eslint": "4.1.6",
     "blessed": "^0.1.81",
     "chai": "^3.4.1",
+    "eslint": "1.10.3",
+    "eslint-config-defaults": "7.1.1",
+    "eslint-plugin-react": "3.11.3",
     "mocha": "^2.3.4",
     "multiline": "^1.0.2",
     "supertest": "^1.1.0"
