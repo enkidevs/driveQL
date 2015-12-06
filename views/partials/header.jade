@@ -19,13 +19,7 @@
           li(class=title=='qraphiQL'?'active':undefined)
             a(href='/graphql') graphiQL
       ul.nav.navbar-nav.navbar-right
-        if !user
-          form.form-horizontal(method='POST')
-            .form-group
-              a.btn.btn-block.btn-google.btn-social(href='/auth/google')
-                i.fa.fa-google-plus
-                | Sign in with Google
-        else
+        if user
           li.dropdown(class=title=='Account Management'?'active':undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               if user.profile.picture
