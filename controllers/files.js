@@ -39,7 +39,7 @@ function getGoogleFiles(req, res, next) {
     const drive = google.drive({ version: 'v2', auth: oauth2Client });
 
     drive.files.list({
-      q: 'mimeType = \'application/vnd.google-apps.spreadsheet\'',
+      q: 'mimeType = \'application/vnd.google-apps.spreadsheet\' and trashed = false',
     }, (err, result) => {
       if (err) {
         if (err.code === 401) {
